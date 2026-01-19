@@ -1,17 +1,33 @@
 //
 //  track_my_rvuApp.swift
-//  track_my_rvu
+//  RVU Tracker
 //
-//  Created by ddctu on 1/18/26.
+//  App entry point with authentication flow
 //
 
 import SwiftUI
 
 @main
-struct track_my_rvuApp: App {
+struct RVUTrackerApp: App {
+    @StateObject private var authViewModel = AuthViewModel()
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            Group {
+                if authViewModel.isAuthenticated {
+                    // Main app content (authenticated)
+                    ContentView()
+                        .environmentObject(authViewModel)
+                } else {
+                    // Sign-in screen (not authenticated)
+                    SignInView()
+                }
+            }
+            .onAppear {
+                Task {
+                    await authViewModel.checkAuthStatus()
+                }
+            }
         }
     }
 }
