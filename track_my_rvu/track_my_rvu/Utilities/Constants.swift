@@ -38,7 +38,7 @@ enum Constants {
 
         // Google Sign-In Configuration
         // TODO: Add actual Google OAuth Client ID from Firebase Console
-        static let googleClientID = "YOUR_GOOGLE_CLIENT_ID_HERE"
+        static let googleClientID = "386826311054-26qf4ko8m30etpsebgrjfo6nlgh1ac8i.apps.googleusercontent.com"
     }
 
     // MARK: - UI Constants
