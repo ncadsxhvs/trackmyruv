@@ -37,6 +37,9 @@
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		A31C31FB2F1D950E0059505B /* track_my_rvu */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				A31C32512F1D950E0059505B,
+			);
 			path = track_my_rvu;
 			sourceTree = "<group>";
 		};
@@ -51,6 +54,16 @@
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		A31C32512F1D950E0059505B = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = A31C31F82F1D950E0059505B /* track_my_rvu */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		A31C31F62F1D950E0059505B /* Frameworks */ = {
@@ -407,9 +420,8 @@
 				DEVELOPMENT_TEAM = 6NQ832289G;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "RVU Tracker";
-				INFOPLIST_KEY_CFBundleURLTypes = "{ CFBundleURLSchemes = (\"com.googleusercontent.apps.26qf4ko8m30etpsebgrjfo6nlgh1ac8i-386826311054\"); }";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = track_my_rvu/Info.plist;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -448,9 +460,8 @@
 				DEVELOPMENT_TEAM = 6NQ832289G;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "RVU Tracker";
-				INFOPLIST_KEY_CFBundleURLTypes = "{ CFBundleURLSchemes = (\"com.googleusercontent.apps.26qf4ko8m30etpsebgrjfo6nlgh1ac8i-386826311054\"); }";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = track_my_rvu/Info.plist;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
