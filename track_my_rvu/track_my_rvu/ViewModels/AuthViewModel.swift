@@ -8,6 +8,8 @@
 import Foundation
 import AuthenticationServices
 import SwiftUI
+import UIKit
+import GoogleSignIn
 
 @MainActor
 class AuthViewModel: NSObject, ObservableObject {
@@ -96,13 +98,49 @@ class AuthViewModel: NSObject, ObservableObject {
         isLoading = true
         errorMessage = nil
 
-        // TODO: Implement Google Sign-In
-        // This requires GoogleSignIn SDK to be added via SPM
-        // For now, show a message
-        Task {
-            await MainActor.run {
-                errorMessage = "Google Sign-In will be available after adding GoogleSignIn SDK via Xcode"
-                isLoading = false
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let rootViewController = windowScene.windows.first?.rootViewController else {
+            errorMessage = "Unable to get root view controller"
+            isLoading = false
+            return
+        }
+
+        let config = GIDConfiguration(clientID: Constants.Auth.googleClientID)
+        GIDSignIn.sharedInstance.configuration = config
+
+        GIDSignIn.sharedInstance.signIn(withPresenting: rootViewController) { [weak self] signInResult, error in
+            guard let self = self else { return }
+
+            Task { @MainActor in
+                if let error = error {
+                    self.errorMessage = "Google Sign-In failed: \(error.localizedDescription)"
+                    self.isLoading = false
+                    return
+                }
+
+                guard let signInResult = signInResult else {
+                    self.errorMessage = "Google Sign-In returned no result"
+                    self.isLoading = false
+                    return
+                }
+
+                let user = signInResult.user
+                guard let idToken = user.idToken?.tokenString else {
+                    self.errorMessage = "Failed to get ID token"
+                    self.isLoading = false
+                    return
+                }
+
+                // TODO: Send idToken to backend for verification
+                // For now, create a mock user
+                let mockUser = User(
+                    id: user.userID ?? UUID().uuidString,
+                    email: user.profile?.email ?? "user@gmail.com",
+                    name: user.profile?.name,
+                    provider: .google
+                )
+
+                await self.handleSuccessfulSignIn(token: idToken, user: mockUser)
             }
         }
     }
