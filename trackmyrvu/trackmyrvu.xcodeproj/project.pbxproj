@@ -6,63 +6,60 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		A3FFFEC52F26654D008EAFF7 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = A3FFFEC42F26654D008EAFF7 /* GoogleSignIn */; };
+		A3FFFEC72F26654D008EAFF7 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = A3FFFEC62F26654D008EAFF7 /* GoogleSignInSwift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
-		A31C320B2F1D950E0059505B /* PBXContainerItemProxy */ = {
+		A3D83AC22F20799E00B1C536 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = A31C31F12F1D950E0059505B /* Project object */;
+			containerPortal = A3D83AAC2F20799C00B1C536 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = A31C31F82F1D950E0059505B;
-			remoteInfo = track_my_rvu;
+			remoteGlobalIDString = A3D83AB32F20799C00B1C536;
+			remoteInfo = trackmyrvu;
 		};
-		A31C32152F1D950E0059505B /* PBXContainerItemProxy */ = {
+		A3D83ACC2F20799E00B1C536 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = A31C31F12F1D950E0059505B /* Project object */;
+			containerPortal = A3D83AAC2F20799C00B1C536 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = A31C31F82F1D950E0059505B;
-			remoteInfo = track_my_rvu;
+			remoteGlobalIDString = A3D83AB32F20799C00B1C536;
+			remoteInfo = trackmyrvu;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		A31C31F92F1D950E0059505B /* track_my_rvu.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = track_my_rvu.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		A31C320A2F1D950E0059505B /* track_my_rvuTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = track_my_rvuTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		A31C32142F1D950E0059505B /* track_my_rvuUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = track_my_rvuUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A3D83AB42F20799C00B1C536 /* trackmyrvu.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = trackmyrvu.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A3D83AC12F20799E00B1C536 /* trackmyrvuTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = trackmyrvuTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A3D83ACB2F20799E00B1C536 /* trackmyrvuUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = trackmyrvuUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		A31C31FB2F1D950E0059505B /* track_my_rvu */ = {
+		A3D83AB62F20799C00B1C536 /* trackmyrvu */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = track_my_rvu;
-			sourceTree = "<group>";
-		};
-		A31C320D2F1D950E0059505B /* track_my_rvuTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = track_my_rvuTests;
-			sourceTree = "<group>";
-		};
-		A31C32172F1D950E0059505B /* track_my_rvuUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = track_my_rvuUITests;
+			path = trackmyrvu;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		A31C31F62F1D950E0059505B /* Frameworks */ = {
+		A3D83AB12F20799C00B1C536 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A3FFFEC52F26654D008EAFF7 /* GoogleSignIn in Frameworks */,
+				A3FFFEC72F26654D008EAFF7 /* GoogleSignInSwift in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A3D83ABE2F20799E00B1C536 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		A31C32072F1D950E0059505B /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		A31C32112F1D950E0059505B /* Frameworks */ = {
+		A3D83AC82F20799E00B1C536 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -72,22 +69,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		A31C31F02F1D950E0059505B = {
+		A3D83AAB2F20799C00B1C536 = {
 			isa = PBXGroup;
 			children = (
-				A31C31FB2F1D950E0059505B /* track_my_rvu */,
-				A31C320D2F1D950E0059505B /* track_my_rvuTests */,
-				A31C32172F1D950E0059505B /* track_my_rvuUITests */,
-				A31C31FA2F1D950E0059505B /* Products */,
+				A3D83AB62F20799C00B1C536 /* trackmyrvu */,
+				A3D83AB52F20799C00B1C536 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		A31C31FA2F1D950E0059505B /* Products */ = {
+		A3D83AB52F20799C00B1C536 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A31C31F92F1D950E0059505B /* track_my_rvu.app */,
-				A31C320A2F1D950E0059505B /* track_my_rvuTests.xctest */,
-				A31C32142F1D950E0059505B /* track_my_rvuUITests.xctest */,
+				A3D83AB42F20799C00B1C536 /* trackmyrvu.app */,
+				A3D83AC12F20799E00B1C536 /* trackmyrvuTests.xctest */,
+				A3D83ACB2F20799E00B1C536 /* trackmyrvuUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -95,134 +90,133 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		A31C31F82F1D950E0059505B /* track_my_rvu */ = {
+		A3D83AB32F20799C00B1C536 /* trackmyrvu */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A31C321E2F1D950E0059505B /* Build configuration list for PBXNativeTarget "track_my_rvu" */;
+			buildConfigurationList = A3D83AD52F20799E00B1C536 /* Build configuration list for PBXNativeTarget "trackmyrvu" */;
 			buildPhases = (
-				A31C31F52F1D950E0059505B /* Sources */,
-				A31C31F62F1D950E0059505B /* Frameworks */,
-				A31C31F72F1D950E0059505B /* Resources */,
+				A3D83AB12F20799C00B1C536 /* Frameworks */,
+				A3D83AB22F20799C00B1C536 /* Resources */,
+				A3253FA52F267464002CAEC7 /* Sources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				A31C31FB2F1D950E0059505B /* track_my_rvu */,
+				A3D83AB62F20799C00B1C536 /* trackmyrvu */,
 			);
-			name = track_my_rvu;
+			name = trackmyrvu;
 			packageProductDependencies = (
+				A3FFFEC42F26654D008EAFF7 /* GoogleSignIn */,
+				A3FFFEC62F26654D008EAFF7 /* GoogleSignInSwift */,
 			);
-			productName = track_my_rvu;
-			productReference = A31C31F92F1D950E0059505B /* track_my_rvu.app */;
+			productName = trackmyrvu;
+			productReference = A3D83AB42F20799C00B1C536 /* trackmyrvu.app */;
 			productType = "com.apple.product-type.application";
 		};
-		A31C32092F1D950E0059505B /* track_my_rvuTests */ = {
+		A3D83AC02F20799E00B1C536 /* trackmyrvuTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A31C32212F1D950E0059505B /* Build configuration list for PBXNativeTarget "track_my_rvuTests" */;
+			buildConfigurationList = A3D83AD82F20799E00B1C536 /* Build configuration list for PBXNativeTarget "trackmyrvuTests" */;
 			buildPhases = (
-				A31C32062F1D950E0059505B /* Sources */,
-				A31C32072F1D950E0059505B /* Frameworks */,
-				A31C32082F1D950E0059505B /* Resources */,
+				A3D83ABD2F20799E00B1C536 /* Sources */,
+				A3D83ABE2F20799E00B1C536 /* Frameworks */,
+				A3D83ABF2F20799E00B1C536 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				A31C320C2F1D950E0059505B /* PBXTargetDependency */,
+				A3D83AC32F20799E00B1C536 /* PBXTargetDependency */,
 			);
-			fileSystemSynchronizedGroups = (
-				A31C320D2F1D950E0059505B /* track_my_rvuTests */,
-			);
-			name = track_my_rvuTests;
+			name = trackmyrvuTests;
 			packageProductDependencies = (
 			);
-			productName = track_my_rvuTests;
-			productReference = A31C320A2F1D950E0059505B /* track_my_rvuTests.xctest */;
+			productName = trackmyrvuTests;
+			productReference = A3D83AC12F20799E00B1C536 /* trackmyrvuTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		A31C32132F1D950E0059505B /* track_my_rvuUITests */ = {
+		A3D83ACA2F20799E00B1C536 /* trackmyrvuUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A31C32242F1D950E0059505B /* Build configuration list for PBXNativeTarget "track_my_rvuUITests" */;
+			buildConfigurationList = A3D83ADB2F20799E00B1C536 /* Build configuration list for PBXNativeTarget "trackmyrvuUITests" */;
 			buildPhases = (
-				A31C32102F1D950E0059505B /* Sources */,
-				A31C32112F1D950E0059505B /* Frameworks */,
-				A31C32122F1D950E0059505B /* Resources */,
+				A3D83AC72F20799E00B1C536 /* Sources */,
+				A3D83AC82F20799E00B1C536 /* Frameworks */,
+				A3D83AC92F20799E00B1C536 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				A31C32162F1D950E0059505B /* PBXTargetDependency */,
+				A3D83ACD2F20799E00B1C536 /* PBXTargetDependency */,
 			);
-			fileSystemSynchronizedGroups = (
-				A31C32172F1D950E0059505B /* track_my_rvuUITests */,
-			);
-			name = track_my_rvuUITests;
+			name = trackmyrvuUITests;
 			packageProductDependencies = (
 			);
-			productName = track_my_rvuUITests;
-			productReference = A31C32142F1D950E0059505B /* track_my_rvuUITests.xctest */;
+			productName = trackmyrvuUITests;
+			productReference = A3D83ACB2F20799E00B1C536 /* trackmyrvuUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		A31C31F12F1D950E0059505B /* Project object */ = {
+		A3D83AAC2F20799C00B1C536 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1620;
-				LastUpgradeCheck = 1620;
+				LastSwiftUpdateCheck = 2620;
+				LastUpgradeCheck = 2620;
 				TargetAttributes = {
-					A31C31F82F1D950E0059505B = {
-						CreatedOnToolsVersion = 16.2;
+					A3D83AB32F20799C00B1C536 = {
+						CreatedOnToolsVersion = 26.2;
 					};
-					A31C32092F1D950E0059505B = {
-						CreatedOnToolsVersion = 16.2;
-						TestTargetID = A31C31F82F1D950E0059505B;
+					A3D83AC02F20799E00B1C536 = {
+						CreatedOnToolsVersion = 26.2;
+						TestTargetID = A3D83AB32F20799C00B1C536;
 					};
-					A31C32132F1D950E0059505B = {
-						CreatedOnToolsVersion = 16.2;
-						TestTargetID = A31C31F82F1D950E0059505B;
+					A3D83ACA2F20799E00B1C536 = {
+						CreatedOnToolsVersion = 26.2;
+						TestTargetID = A3D83AB32F20799C00B1C536;
 					};
 				};
 			};
-			buildConfigurationList = A31C31F42F1D950E0059505B /* Build configuration list for PBXProject "track_my_rvu" */;
+			buildConfigurationList = A3D83AAF2F20799C00B1C536 /* Build configuration list for PBXProject "trackmyrvu" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
 			);
-			mainGroup = A31C31F02F1D950E0059505B;
+			mainGroup = A3D83AAB2F20799C00B1C536;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				A3FFFEC32F26654D008EAFF7 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+			);
 			preferredProjectObjectVersion = 77;
-			productRefGroup = A31C31FA2F1D950E0059505B /* Products */;
+			productRefGroup = A3D83AB52F20799C00B1C536 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				A31C31F82F1D950E0059505B /* track_my_rvu */,
-				A31C32092F1D950E0059505B /* track_my_rvuTests */,
-				A31C32132F1D950E0059505B /* track_my_rvuUITests */,
+				A3D83AB32F20799C00B1C536 /* trackmyrvu */,
+				A3D83AC02F20799E00B1C536 /* trackmyrvuTests */,
+				A3D83ACA2F20799E00B1C536 /* trackmyrvuUITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		A31C31F72F1D950E0059505B /* Resources */ = {
+		A3D83AB22F20799C00B1C536 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		A31C32082F1D950E0059505B /* Resources */ = {
+		A3D83ABF2F20799E00B1C536 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		A31C32122F1D950E0059505B /* Resources */ = {
+		A3D83AC92F20799E00B1C536 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -232,21 +226,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		A31C31F52F1D950E0059505B /* Sources */ = {
+		A3253FA52F267464002CAEC7 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		A31C32062F1D950E0059505B /* Sources */ = {
+		A3D83ABD2F20799E00B1C536 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		A31C32102F1D950E0059505B /* Sources */ = {
+		A3D83AC72F20799E00B1C536 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -256,20 +250,20 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		A31C320C2F1D950E0059505B /* PBXTargetDependency */ = {
+		A3D83AC32F20799E00B1C536 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = A31C31F82F1D950E0059505B /* track_my_rvu */;
-			targetProxy = A31C320B2F1D950E0059505B /* PBXContainerItemProxy */;
+			target = A3D83AB32F20799C00B1C536 /* trackmyrvu */;
+			targetProxy = A3D83AC22F20799E00B1C536 /* PBXContainerItemProxy */;
 		};
-		A31C32162F1D950E0059505B /* PBXTargetDependency */ = {
+		A3D83ACD2F20799E00B1C536 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = A31C31F82F1D950E0059505B /* track_my_rvu */;
-			targetProxy = A31C32152F1D950E0059505B /* PBXContainerItemProxy */;
+			target = A3D83AB32F20799C00B1C536 /* trackmyrvu */;
+			targetProxy = A3D83ACC2F20799E00B1C536 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		A31C321C2F1D950E0059505B /* Debug */ = {
+		A3D83AD32F20799E00B1C536 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -304,6 +298,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 6NQ832289G;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -321,16 +316,18 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
-		A31C321D2F1D950E0059505B /* Release */ = {
+		A3D83AD42F20799E00B1C536 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -365,6 +362,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 6NQ832289G;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -376,221 +374,238 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
-		A31C321F2F1D950E0059505B /* Debug */ = {
+		A3D83AD62F20799E00B1C536 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = track_my_rvu/track_my_rvu.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"track_my_rvu/Preview Content\"";
 				DEVELOPMENT_TEAM = 6NQ832289G;
-				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
-				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
-				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
-				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
-				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
+				GENERATE_INFOPLIST_FILE = NO;
+				GIDClientID = "386826311054-ltu6cla9v0beb3k0p68o96ec5hfqv6ps.apps.googleusercontent.com";
+				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "";
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
-				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 15.1;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.trackmyrvu.ios;
+				NEW_SETTING1 = "";
+				PRODUCT_BUNDLE_IDENTIFIER = trackmyrvuios.trackmyrvu;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
-				XROS_DEPLOYMENT_TARGET = 2.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
-		A31C32202F1D950E0059505B /* Release */ = {
+		A3D83AD72F20799E00B1C536 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = track_my_rvu/track_my_rvu.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"track_my_rvu/Preview Content\"";
 				DEVELOPMENT_TEAM = 6NQ832289G;
-				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
-				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
-				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
-				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
-				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
+				GENERATE_INFOPLIST_FILE = NO;
+				GIDClientID = "386826311054-ltu6cla9v0beb3k0p68o96ec5hfqv6ps.apps.googleusercontent.com";
+				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "";
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
-				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 15.1;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.trackmyrvu.ios;
+				NEW_SETTING1 = "";
+				PRODUCT_BUNDLE_IDENTIFIER = trackmyrvuios.trackmyrvu;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
-				XROS_DEPLOYMENT_TARGET = 2.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
-		A31C32222F1D950E0059505B /* Debug */ = {
+		A3D83AD92F20799E00B1C536 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 6NQ832289G;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MACOSX_DEPLOYMENT_TARGET = 15.1;
+				GENERATE_INFOPLIST_FILE = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "cdc.track-my-rvuTests";
+				PRODUCT_BUNDLE_IDENTIFIER = trackmyrvuios.trackmyrvuTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/track_my_rvu.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/track_my_rvu";
-				XROS_DEPLOYMENT_TARGET = 2.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/trackmyrvu.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/trackmyrvu";
 			};
 			name = Debug;
 		};
-		A31C32232F1D950E0059505B /* Release */ = {
+		A3D83ADA2F20799E00B1C536 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 6NQ832289G;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MACOSX_DEPLOYMENT_TARGET = 15.1;
+				GENERATE_INFOPLIST_FILE = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "cdc.track-my-rvuTests";
+				PRODUCT_BUNDLE_IDENTIFIER = trackmyrvuios.trackmyrvuTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/track_my_rvu.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/track_my_rvu";
-				XROS_DEPLOYMENT_TARGET = 2.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/trackmyrvu.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/trackmyrvu";
 			};
 			name = Release;
 		};
-		A31C32252F1D950E0059505B /* Debug */ = {
+		A3D83ADC2F20799E00B1C536 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 6NQ832289G;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MACOSX_DEPLOYMENT_TARGET = 15.1;
+				GENERATE_INFOPLIST_FILE = NO;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "cdc.track-my-rvuUITests";
+				PRODUCT_BUNDLE_IDENTIFIER = trackmyrvuios.trackmyrvuUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
-				TEST_TARGET_NAME = track_my_rvu;
-				XROS_DEPLOYMENT_TARGET = 2.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = trackmyrvu;
 			};
 			name = Debug;
 		};
-		A31C32262F1D950E0059505B /* Release */ = {
+		A3D83ADD2F20799E00B1C536 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 6NQ832289G;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MACOSX_DEPLOYMENT_TARGET = 15.1;
+				GENERATE_INFOPLIST_FILE = NO;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "cdc.track-my-rvuUITests";
+				PRODUCT_BUNDLE_IDENTIFIER = trackmyrvuios.trackmyrvuUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
-				TEST_TARGET_NAME = track_my_rvu;
-				XROS_DEPLOYMENT_TARGET = 2.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = trackmyrvu;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		A31C31F42F1D950E0059505B /* Build configuration list for PBXProject "track_my_rvu" */ = {
+		A3D83AAF2F20799C00B1C536 /* Build configuration list for PBXProject "trackmyrvu" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A31C321C2F1D950E0059505B /* Debug */,
-				A31C321D2F1D950E0059505B /* Release */,
+				A3D83AD32F20799E00B1C536 /* Debug */,
+				A3D83AD42F20799E00B1C536 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A31C321E2F1D950E0059505B /* Build configuration list for PBXNativeTarget "track_my_rvu" */ = {
+		A3D83AD52F20799E00B1C536 /* Build configuration list for PBXNativeTarget "trackmyrvu" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A31C321F2F1D950E0059505B /* Debug */,
-				A31C32202F1D950E0059505B /* Release */,
+				A3D83AD62F20799E00B1C536 /* Debug */,
+				A3D83AD72F20799E00B1C536 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A31C32212F1D950E0059505B /* Build configuration list for PBXNativeTarget "track_my_rvuTests" */ = {
+		A3D83AD82F20799E00B1C536 /* Build configuration list for PBXNativeTarget "trackmyrvuTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A31C32222F1D950E0059505B /* Debug */,
-				A31C32232F1D950E0059505B /* Release */,
+				A3D83AD92F20799E00B1C536 /* Debug */,
+				A3D83ADA2F20799E00B1C536 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A31C32242F1D950E0059505B /* Build configuration list for PBXNativeTarget "track_my_rvuUITests" */ = {
+		A3D83ADB2F20799E00B1C536 /* Build configuration list for PBXNativeTarget "trackmyrvuUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A31C32252F1D950E0059505B /* Debug */,
-				A31C32262F1D950E0059505B /* Release */,
+				A3D83ADC2F20799E00B1C536 /* Debug */,
+				A3D83ADD2F20799E00B1C536 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		A3FFFEC32F26654D008EAFF7 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A3FFFEC42F26654D008EAFF7 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A3FFFEC32F26654D008EAFF7 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		A3FFFEC62F26654D008EAFF7 /* GoogleSignInSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A3FFFEC32F26654D008EAFF7 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignInSwift;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
-	rootObject = A31C31F12F1D950E0059505B /* Project object */;
+	rootObject = A3D83AAC2F20799C00B1C536 /* Project object */;
 }

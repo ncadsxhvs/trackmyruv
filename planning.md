@@ -1,9 +1,137 @@
 # RVU Tracker iOS - Project Planning Document
 
-**Version:** 1.0.0  
-**Platform:** iOS 17.0+  
-**Status:** Pre-Development  
-**Last Updated:** January 17, 2026
+**Version:** 1.0.0
+**Platform:** iOS 17.0+
+**Status:** In Development - Phase 1 Complete
+**Last Updated:** January 25, 2026
+
+---
+
+## 🎉 Phase 1 Complete: Authentication & Home Screen
+
+**Completed:** January 25, 2026
+
+### Implementation Summary
+
+Successfully implemented Google Sign-In authentication with a dedicated login page and authenticated home screen. The app now has:
+
+#### Project Structure Created
+```
+trackmyrvu/
+├── Info.plist                          # Google OAuth configuration
+├── trackmyrvu.xcodeproj/               # Xcode project
+└── trackmyrvu/                         # Source files
+    ├── Models/
+    │   └── User.swift                  # User data model
+    ├── Services/
+    │   └── AuthService.swift           # Google Sign-In integration
+    ├── ViewModels/
+    │   └── AuthViewModel.swift         # Authentication state management
+    ├── Views/
+    │   ├── Auth/
+    │   │   └── SignInView.swift        # Login screen
+    │   └── Home/
+    │       └── HomeView.swift          # Authenticated home screen
+    ├── Assets.xcassets/                # App assets
+    ├── Preview Content/                # Preview assets
+    └── trackmyrvuApp.swift             # App entry point
+```
+
+#### Files Implemented
+
+1. **User.swift** - Codable struct for user profile data with properties: id, email, name, profileImageURL, givenName, familyName
+
+2. **AuthService.swift** - Google Sign-In SDK integration with methods:
+   - `signIn()` - Trigger Google authentication flow
+   - `signOut()` - Clear Google session
+   - `restorePreviousSignIn()` - Auto-restore session
+   - User data persistence via UserDefaults
+
+3. **AuthViewModel.swift** - Observable state manager using @Observable macro:
+   - Properties: currentUser, isLoading, errorMessage, isSignedIn
+   - Automatic session restoration on init
+   - Async sign-in/sign-out methods
+
+4. **SignInView.swift** - Branded login screen featuring:
+   - Medical app branding with heart icon
+   - Native GoogleSignInSwift button
+   - Loading state indicator
+   - Error alert handling
+
+5. **HomeView.swift** - Authenticated home screen with:
+   - Profile header with AsyncImage for Google photo
+   - RVU summary cards (placeholders ready for Phase 7)
+   - Quick action buttons for future features:
+     - New Visit Entry (→ Phase 3)
+     - Visit History (→ Phase 4)
+     - Analytics (→ Phase 7)
+   - Sign-out confirmation dialog
+
+6. **trackmyrvuApp.swift** - App entry point with:
+   - Conditional navigation based on auth state
+   - Google OAuth URL callback handler
+   - Single AuthViewModel instance for app lifetime
+
+7. **Info.plist** - OAuth configuration:
+   - GIDClientID: 386826311054-ltu6cla9v0beb3k0p68o96ec5hfqv6ps.apps.googleusercontent.com
+   - CFBundleURLTypes for OAuth callback URL scheme
+
+#### Configuration
+
+- **GoogleSignIn SDK**: Version 9.1.0 (via Swift Package Manager)
+- **Client ID**: 386826311054-ltu6cla9v0beb3k0p68o96ec5hfqv6ps.apps.googleusercontent.com
+- **URL Scheme**: com.googleusercontent.apps.386826311054-ltu6cla9v0beb3k0p68o96ec5hfqv6ps
+- **Bundle ID**: trackmyrvuios.trackmyrvu
+- **iOS Deployment Target**: iOS 26.2 (can be lowered to 17.0 if needed)
+
+#### Build Status
+
+**Build Command:**
+```bash
+cd /Users/ddctu/git/track_my_rvu_ios/trackmyrvu
+xcodebuild build -scheme trackmyrvu \
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
+  -configuration Debug
+```
+
+**Result:** ✅ BUILD SUCCEEDED
+
+#### Key Features Working
+
+1. **Google Sign-In Authentication**
+   - Native GoogleSignInSwift button integration
+   - Automatic session restoration on app launch
+   - Secure token management via GoogleSignIn SDK
+
+2. **Conditional Navigation**
+   - SignInView displayed for unauthenticated users
+   - HomeView displayed for authenticated users
+   - Automatic navigation on auth state changes
+
+3. **Profile Display**
+   - User name and email from Google profile
+   - Profile photo with AsyncImage (with fallback icon)
+   - Material design UI elements
+
+4. **Modern Architecture**
+   - @Observable for state management (iOS 17+)
+   - Swift Concurrency (async/await)
+   - SwiftUI with native UI components
+
+5. **User Experience**
+   - Loading states during sign-in
+   - Error handling with alerts
+   - Sign-out confirmation dialog
+   - Gradient background on login screen
+
+#### Next Steps
+
+The HomeView contains placeholder buttons ready for:
+- **Phase 3**: Quick Visit Entry implementation
+- **Phase 4**: Visit History list view
+- **Phase 7**: Analytics Dashboard
+
+All authentication infrastructure is complete and ready for building the core RVU tracking features.
 
 ---
 
@@ -196,33 +324,41 @@ RVUTracker/
 
 ## Development Roadmap
 
-### Phase 1: Foundation (Week 1-2)
+### Phase 1: Foundation (Week 1-2) ✅ COMPLETE
 **Goal:** Project setup, authentication, basic navigation
 
 #### Setup Tasks
-- [ ] Create new Xcode project (iOS 17+, iPhone only)
-- [ ] Configure bundle ID: `com.trackmyrvu.ios`
-- [ ] Add Swift Package dependencies (GoogleSignIn)
-- [ ] Set up Git repository
-- [ ] Configure app icons and launch screen
-- [ ] Set up development/production schemes
+- [x] Create new Xcode project (iOS 17+, iPhone only)
+- [x] Configure bundle ID: `trackmyrvuios.trackmyrvu`
+- [x] Add Swift Package dependencies (GoogleSignIn v9.1.0)
+- [x] Set up Git repository
+- [x] Configure app icons and launch screen (basic assets)
+- [ ] Set up development/production schemes (deferred)
 
 #### Authentication
-- [ ] Implement `AuthService` with Keychain storage
-- [ ] Create `SignInView` UI
-- [ ] Integrate Apple Sign-In
-- [ ] Integrate Google Sign-In
-- [ ] Implement JWT token management
-- [ ] Add auto-refresh token logic
-- [ ] Create backend endpoint: `POST /api/auth/apple`
+- [x] Implement `AuthService` with secure storage (via GoogleSignIn SDK)
+- [x] Create `SignInView` UI
+- [ ] Integrate Apple Sign-In (deferred to Phase 1.5)
+- [x] Integrate Google Sign-In
+- [x] Implement session management (Google tokens)
+- [x] Add auto-restore session logic
+- [ ] Create backend endpoint: `POST /api/auth/google` (needed for Phase 2)
+- [ ] Implement JWT token management (deferred until backend integration)
+- [ ] Add auto-refresh token logic (deferred until backend integration)
 
 #### Navigation
-- [ ] Create `ContentView` with TabView
-- [ ] Set up navigation structure (4 tabs)
-- [ ] Implement tab icons and labels
-- [ ] Add authentication gate (show SignInView if not logged in)
+- [x] Create app entry point with conditional auth gate
+- [x] Create `HomeView` as main authenticated screen
+- [ ] Set up tab navigation structure (deferred to Phase 2)
+- [x] Add authentication gate (show SignInView if not logged in)
 
-**Deliverable:** User can sign in and see empty tab structure
+**Deliverable:** ✅ User can sign in with Google and see home screen with placeholder features
+
+**Notes:**
+- Chose to implement Google Sign-In first (Apple Sign-In deferred)
+- Using Google SDK's built-in token management instead of custom JWT initially
+- HomeView serves as landing page with quick action buttons
+- Tab navigation will be added when multiple screens are implemented
 
 ---
 
@@ -694,12 +830,31 @@ Response: 204 No Content
 2. **Why no CoreData?** Swift Data is modern replacement, simpler syntax
 3. **Why offline-first?** Medical professionals often in low-signal areas
 4. **Why server-wins conflicts?** Simplicity, web app is primary platform
+5. **Why @Observable instead of ObservableObject?** Modern Swift Observation framework (iOS 17+), better performance with fewer view updates
 
 ### Design Decisions
 1. **iPhone only (v1):** Focus MVP, add iPad later
 2. **Portrait only:** Medical workflows typically portrait
 3. **No pagination:** Small dataset (< 10K visits typical), Swift Data handles well
 4. **Bundled HCPCS:** Offline-first, codes rarely change
+
+### Phase 1 Implementation Decisions (Jan 2026)
+1. **Google Sign-In First:** Implemented Google before Apple Sign-In for faster MVP
+   - Easier testing during development
+   - Web app already uses Google
+   - Apple Sign-In can be added in Phase 1.5
+2. **UserDefaults for User Profile:** Non-sensitive public profile data (name, email, photo URL)
+   - Google SDK stores secure tokens in Keychain automatically
+   - Simplifies initial implementation
+3. **Info.plist Location:** Placed at project root (not in synced folder) to avoid Xcode build conflicts
+   - Xcode's PBXFileSystemSynchronizedRootGroup auto-includes files
+   - Custom Info.plist must be outside synced directories
+4. **HomeView as Landing:** Single home screen instead of tab navigation initially
+   - Quick action buttons provide navigation to future features
+   - Simpler for Phase 1, tabs can be added when multiple screens exist
+5. **No Backend Integration Yet:** Using Google SDK token management temporarily
+   - Backend JWT exchange will be added in Phase 2
+   - Allows frontend development to proceed independently
 
 ### Future Enhancements
 - iPad support with split-view
@@ -721,5 +876,34 @@ Response: 204 No Content
 
 ---
 
-**Document Status:** Living document - update as project evolves  
-**Next Review:** After Phase 1 completion
+**Document Status:** Living document - update as project evolves
+**Last Review:** January 25, 2026 (Phase 1 Complete)
+**Next Review:** After Phase 2 completion
+
+---
+
+## Phase 1 Build Configuration
+
+### Verified Build Settings
+- **Scheme:** trackmyrvu
+- **Destination:** iOS Simulator (iPhone 17 Pro, iOS 26.2)
+- **Configuration:** Debug
+- **Build Status:** ✅ Clean build succeeds
+- **GoogleSignIn SDK:** ✅ Resolved and linked (v9.1.0)
+
+### Info.plist Configuration
+```xml
+Location: /Users/ddctu/git/track_my_rvu_ios/trackmyrvu/Info.plist
+
+GIDClientID: 386826311054-ltu6cla9v0beb3k0p68o96ec5hfqv6ps.apps.googleusercontent.com
+CFBundleURLSchemes: com.googleusercontent.apps.386826311054-ltu6cla9v0beb3k0p68o96ec5hfqv6ps
+```
+
+### Ready for Phase 2
+With Phase 1 complete, the project is ready for:
+1. **Swift Data Models** - Visit, Procedure models with relationships
+2. **HCPCS Cache Service** - Load and search 16K codes offline
+3. **Date Utilities** - Timezone-independent date handling
+4. **Backend API Integration** - JWT token exchange with `/api/auth/google`
+
+The authentication foundation is solid and all SwiftUI views follow modern patterns that can be extended for future features.
