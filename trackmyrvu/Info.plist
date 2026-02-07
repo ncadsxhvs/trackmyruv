@@ -16,6 +16,8 @@
 	<string>1</string>
 	<key>GIDClientID</key>
 	<string>386826311054-ltu6cla9v0beb3k0p68o96ec5hfqv6ps.apps.googleusercontent.com</string>
+	<key>GIDServerClientID</key>
+	<string>386826311054-hic8jh474jh1aiq6dclp2oor9mgc981l.apps.googleusercontent.com</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>

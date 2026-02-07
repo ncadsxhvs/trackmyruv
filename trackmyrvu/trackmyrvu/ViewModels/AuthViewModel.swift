@@ -13,13 +13,14 @@ import SwiftUI
 @MainActor
 class AuthViewModel {
     var currentUser: User?
+    var sessionToken: String?
     var isLoading = false
     var errorMessage: String?
 
     private let authService = AuthService.shared
 
     var isSignedIn: Bool {
-        currentUser != nil
+        currentUser != nil && sessionToken != nil
     }
 
     init() {
@@ -30,23 +31,36 @@ class AuthViewModel {
     func checkAuthStatus() {
         Task {
             do {
-                currentUser = try await authService.restorePreviousSignIn()
+                // Try to restore session token from keychain
+                if let token = try await authService.restorePreviousSignIn() {
+                    sessionToken = token
+                    // Token exists, create placeholder user
+                    // Real user data will be fetched from API
+                    currentUser = User(id: "", email: "", name: nil, image: nil)
+                } else {
+                    currentUser = nil
+                    sessionToken = nil
+                }
             } catch {
-                // No previous session, user needs to sign in
                 currentUser = nil
+                sessionToken = nil
             }
         }
     }
 
-    /// Sign in with Google
+    /// Sign in with Google and authenticate with backend
     func signIn() async {
         isLoading = true
         errorMessage = nil
 
         do {
-            currentUser = try await authService.signIn()
+            let (user, token) = try await authService.signIn()
+            currentUser = user
+            sessionToken = token
         } catch {
             errorMessage = error.localizedDescription
+            currentUser = nil
+            sessionToken = nil
         }
 
         isLoading = false
@@ -56,5 +70,6 @@ class AuthViewModel {
     func signOut() {
         authService.signOut()
         currentUser = nil
+        sessionToken = nil
     }
 }

@@ -11,9 +11,10 @@ import SwiftUI
 struct HomeView: View {
     @Bindable var authViewModel: AuthViewModel
     @State private var showSignOutConfirmation = false
+    @State private var navigationPath = NavigationPath()
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $navigationPath) {
             ScrollView {
                 VStack(spacing: 24) {
                     // Profile header
@@ -25,7 +26,7 @@ struct HomeView: View {
                     RVUSummaryView()
 
                     // Quick actions section
-                    QuickActionsView()
+                    QuickActionsView(navigationPath: $navigationPath)
 
                     Spacer(minLength: 20)
                 }
@@ -53,6 +54,14 @@ struct HomeView: View {
             } message: {
                 Text("Are you sure you want to sign out?")
             }
+            .navigationDestination(for: String.self) { destination in
+                switch destination {
+                case "visitHistory":
+                    VisitHistoryView()
+                default:
+                    Text("Unknown destination")
+                }
+            }
         }
     }
 }
@@ -79,7 +88,7 @@ struct ProfileHeaderView: View {
 
             // User info
             VStack(spacing: 4) {
-                Text(user.name)
+                Text(user.displayName)
                     .font(.title2)
                     .fontWeight(.semibold)
 
@@ -143,6 +152,8 @@ struct SummaryCard: View {
 // MARK: - Quick Actions
 
 struct QuickActionsView: View {
+    @Binding var navigationPath: NavigationPath
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Quick Actions")
@@ -163,7 +174,7 @@ struct QuickActionsView: View {
                     icon: "list.bullet.rectangle",
                     color: .green
                 ) {
-                    // TODO: Navigate to history view
+                    navigationPath.append("visitHistory")
                 }
 
                 ActionButton(
@@ -220,9 +231,7 @@ struct ActionButton: View {
             id: "123",
             email: "doctor@example.com",
             name: "Dr. Jane Smith",
-            profileImageURL: nil,
-            givenName: "Jane",
-            familyName: "Smith"
+            image: nil
         )
         return vm
     }())
