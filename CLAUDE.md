@@ -24,9 +24,33 @@ Native iOS application for tracking medical procedure RVUs (Relative Value Units
 
 ## Project Structure
 
+**Actual Structure (Current Implementation):**
 ```
-RVUTracker/
-├── RVUTrackerApp.swift         # App entry point
+trackmyrvu/
+├── trackmyrvuApp.swift          # App entry point
+├── Models/
+│   ├── User.swift               # User model (matches backend API)
+│   └── Visit.swift              # Visit & VisitProcedure models
+├── ViewModels/
+│   ├── AuthViewModel.swift      # Authentication state (@Observable)
+│   └── VisitsViewModel.swift    # Visits list loading logic
+├── Views/
+│   ├── Auth/
+│   │   └── SignInView.swift     # Google Sign-In screen
+│   ├── Home/
+│   │   └── HomeView.swift       # Authenticated home screen
+│   └── Visits/
+│       └── VisitHistoryView.swift # Visit list view
+├── Services/
+│   ├── AuthService.swift        # Google Sign-In + JWT auth
+│   └── APIService.swift         # Backend API client (JWT tokens)
+└── Info.plist                   # OAuth client IDs
+```
+
+**Planned Structure (Future):**
+```
+trackmyrvu/
+├── trackmyrvuApp.swift         # App entry point
 ├── Models/
 │   ├── Visit.swift             # Visit data model (Swift Data)
 │   ├── Procedure.swift          # Procedure data model
@@ -69,12 +93,17 @@ RVUTracker/
 
 ## Core Features
 
-### 1. Authentication
-- **Apple Sign-In** - Primary authentication (required for App Store)
-- **Google Sign-In** - Secondary option for consistency with web app
-- Secure token storage in iOS Keychain
-- Auto-refresh expired tokens
-- Shared user accounts with web application
+### 1. Authentication ✅ IMPLEMENTED
+- **Google Sign-In** - Fully implemented with backend JWT authentication
+  - Uses GoogleSignIn-iOS SDK v9.1.0
+  - Dual OAuth client IDs (iOS + Server)
+  - Backend endpoint: `POST /api/auth/mobile/google`
+  - JWT tokens (30-day expiration)
+- **Apple Sign-In** - Not yet implemented (required for App Store)
+- **Secure token storage** - iOS Keychain (not UserDefaults)
+- **Session persistence** - Auto-restores on app launch
+- **Token management** - Handles expiration, auto sign-out on 401
+- **Shared user accounts** - Same backend as web application
 
 ### 2. Quick Visit Entry (Primary Mobile Use Case)
 - Fast procedure logging on-the-go
@@ -409,11 +438,14 @@ open RVUTracker.xcodeproj
 ```
 
 ### Project Configuration
-- **Bundle ID:** `com.trackmyrvu.ios`
+- **Bundle ID:** `trackmyrvuios.trackmyrvu`
+- **Project Path:** `/Users/ddctu/git/track_my_rvu_ios/trackmyrvu/`
+- **Xcode Project:** `trackmyrvu.xcodeproj`
 - **Team:** Your Apple Developer Team
-- **Deployment Target:** iOS 17.0
+- **Deployment Target:** iOS 17.0+
 - **Supported Devices:** iPhone only
 - **Orientations:** Portrait only (lock landscape)
+- **Dependencies:** GoogleSignIn-iOS v9.1.0 (via SPM)
 
 ### Testing Strategy
 - **Unit Tests:** ViewModels, Services, Utilities
@@ -422,7 +454,17 @@ open RVUTracker.xcodeproj
 
 ## Backend Requirements
 
-**New endpoints needed for iOS:**
+**Implemented Endpoints:**
+
+1. **Google Mobile Auth** ✅
+```typescript
+// POST /api/auth/mobile/google
+// Body: { idToken: string }
+// Returns: { success: boolean, user: User, sessionToken: string, expiresIn: number }
+// Reference: /Users/ddctu/git/hh/MOBILE_AUTH.md
+```
+
+**Endpoints Needed for Future Features:**
 
 1. **Apple Sign-In endpoint**
 ```typescript
@@ -437,6 +479,11 @@ open RVUTracker.xcodeproj
 // Body: { lastSyncTimestamp: string, localChanges: Visit[] }
 // Returns: { serverChanges: Visit[], conflicts: Visit[] }
 ```
+
+**Backend Configuration:**
+- Environment variable `GOOGLE_CLIENT_ID` must be set to: `386826311054-hic8jh474jh1aiq6dclp2oor9mgc981l.apps.googleusercontent.com`
+- This is the Web/Server OAuth client ID used for token verification
+- iOS app uses a different client ID for sign-in flow
 
 ## Conventions
 
@@ -468,22 +515,85 @@ open RVUTracker.xcodeproj
 
 ## Current Status
 
-**🚧 PROJECT NOT YET STARTED**
+**✅ AUTHENTICATION IMPLEMENTED - IN PROGRESS**
 
-This is a planning document for the iOS app. Web application (Next.js) is production-ready at https://trackmyrvu.com.
+### Completed Features:
 
-**Next Steps:**
-1. Create new iOS repository
-2. Set up Xcode project with Swift Data
-3. Implement authentication (Apple + Google Sign-In)
-4. Build quick visit entry (core mobile feature)
+#### 1. **Google Sign-In Authentication** ✅
+- **Location**: `/Users/ddctu/git/track_my_rvu_ios/trackmyrvu/`
+- **Bundle ID**: `trackmyrvuios.trackmyrvu`
+- **Backend**: Production API at `https://www.trackmyrvu.com/api`
+
+**Implementation Details:**
+- **AuthService.swift**: Complete mobile authentication flow
+  - Google Sign-In → ID token exchange → Backend JWT token
+  - JWT stored securely in iOS Keychain (not UserDefaults)
+  - Session restoration on app launch
+  - Token expiration handling (30-day tokens)
+
+- **User Model**: Matches backend API response
+  - Fields: `id`, `email`, `name?`, `image?`
+  - Codable for JSON serialization
+  - Computed properties: `displayName`, `profileImageURL`
+
+- **AuthViewModel**: Observable authentication state (@Observable)
+  - Properties: `currentUser`, `sessionToken`, `isLoading`, `errorMessage`
+  - Methods: `signIn()`, `signOut()`, `checkAuthStatus()`
+  - Session persistence across app restarts
+
+- **APIService**: JWT Bearer token authentication
+  - All requests include `Authorization: Bearer <token>` header
+  - Automatic token retrieval from Keychain
+  - Handles 401 (token expired) errors
+
+**OAuth Configuration (Info.plist):**
+```xml
+<key>GIDClientID</key>
+<string>386826311054-ltu6cla9v0beb3k0p68o96ec5hfqv6ps.apps.googleusercontent.com</string>
+<key>GIDServerClientID</key>
+<string>386826311054-hic8jh474jh1aiq6dclp2oor9mgc981l.apps.googleusercontent.com</string>
+```
+
+**Why Two Client IDs:**
+- `GIDClientID` (iOS): Used for sign-in flow (supports custom URL schemes)
+- `GIDServerClientID` (Web): ID token audience for backend verification
+- Backend verifies tokens using the server/web client ID
+
+**Backend Endpoint Used:**
+- `POST /api/auth/mobile/google` - Exchanges Google ID token for JWT
+- Reference: `/Users/ddctu/git/hh/MOBILE_AUTH.md`
+
+#### 2. **UI Views** ✅
+- **SignInView**: Google Sign-In button, loading states, error handling
+- **HomeView**: Profile display, RVU summary cards (placeholders), quick actions
+- **VisitHistoryView**: List of visits with procedures (ready for API data)
+
+#### 3. **API Integration** ✅
+- **APIService**: Configured for production backend
+- **VisitsViewModel**: Fetches visits from `/api/visits` endpoint
+- **Visit Model**: Matches backend schema with procedures
+
+### In Progress:
+
+- Visit history data fetching (API ready, needs testing)
+- Error handling and retry logic
+- Offline mode (not yet implemented)
+
+### Next Steps:
+1. ~~Implement authentication (Google Sign-In)~~ ✅
+2. Test end-to-end authentication flow
+3. Implement visit creation (POST /api/visits)
+4. Add visit editing and deletion
 5. Implement offline support with Swift Data
-6. Add visit history list view
-7. Build analytics dashboard
-8. Implement sync service
-9. Bundle HCPCS codes (~5MB JSON)
+6. Build analytics dashboard
+7. Implement sync service for offline changes
+8. Bundle HCPCS codes (~5MB JSON)
+9. Implement Apple Sign-In (App Store requirement)
 10. Testing and polish
 11. App Store submission
+
+### Known Issues:
+- None currently - authentication working as expected
 
 ---
 

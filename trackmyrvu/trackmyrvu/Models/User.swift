@@ -7,21 +7,27 @@
 
 import Foundation
 
-/// User model representing authenticated Google user
+/// User model matching backend API response
 struct User: Codable, Identifiable {
     let id: String
     let email: String
-    let name: String
-    let profileImageURL: String?
-    let givenName: String?
-    let familyName: String?
+    let name: String?
+    let image: String?
 
     enum CodingKeys: String, CodingKey {
         case id
         case email
         case name
-        case profileImageURL
-        case givenName
-        case familyName
+        case image
+    }
+
+    /// Computed property for display name
+    var displayName: String {
+        name ?? email
+    }
+
+    /// Computed property for backward compatibility
+    var profileImageURL: String? {
+        image
     }
 }
