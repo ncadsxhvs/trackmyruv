@@ -152,3 +152,37 @@ private extension String {
         ISO8601DateFormatter().date(from: self)
     }
 }
+
+// MARK: - Create Visit Request
+
+struct CreateVisitRequest: Codable {
+    let date: String
+    let time: String?
+    let notes: String?
+    let procedures: [CreateProcedureRequest]
+    let isNoShow: Bool
+
+    enum CodingKeys: String, CodingKey {
+        case date
+        case time
+        case notes
+        case procedures
+        case isNoShow = "is_no_show"
+    }
+}
+
+struct CreateProcedureRequest: Codable {
+    let hcpcs: String
+    let description: String
+    let statusCode: String
+    let workRVU: Double
+    let quantity: Int
+
+    enum CodingKeys: String, CodingKey {
+        case hcpcs
+        case description
+        case statusCode = "status_code"
+        case workRVU = "work_rvu"
+        case quantity
+    }
+}

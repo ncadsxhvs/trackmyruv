@@ -59,6 +59,97 @@ actor APIService {
         }
     }
 
+    func createVisit(_ visitRequest: CreateVisitRequest) async throws -> Visit {
+        let url = baseURL.appending(path: "visits")
+
+        // Encode request body
+        let encoder = JSONEncoder()
+        encoder.keyEncodingStrategy = .convertToSnakeCase
+        let body = try encoder.encode(visitRequest)
+
+        let request = try await makeAuthenticatedRequest(url: url, method: "POST", body: body)
+        let (data, response) = try await session.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw APIError.invalidResponse
+        }
+
+        // Handle 401 - token expired or invalid
+        if httpResponse.statusCode == 401 {
+            throw APIError.tokenExpired
+        }
+
+        guard (200..<300).contains(httpResponse.statusCode) else {
+            throw APIError.server(
+                status: httpResponse.statusCode,
+                message: decodeAPIErrorMessage(from: data)
+            )
+        }
+
+        do {
+            return try Self.decoder.decode(Visit.self, from: data)
+        } catch {
+            throw APIError.decoding(error)
+        }
+    }
+
+    func updateVisit(id: String, _ visitRequest: CreateVisitRequest) async throws -> Visit {
+        let url = baseURL.appending(path: "visits/\(id)")
+
+        // Encode request body
+        let encoder = JSONEncoder()
+        encoder.keyEncodingStrategy = .convertToSnakeCase
+        let body = try encoder.encode(visitRequest)
+
+        let request = try await makeAuthenticatedRequest(url: url, method: "PUT", body: body)
+        let (data, response) = try await session.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw APIError.invalidResponse
+        }
+
+        // Handle 401 - token expired or invalid
+        if httpResponse.statusCode == 401 {
+            throw APIError.tokenExpired
+        }
+
+        guard (200..<300).contains(httpResponse.statusCode) else {
+            throw APIError.server(
+                status: httpResponse.statusCode,
+                message: decodeAPIErrorMessage(from: data)
+            )
+        }
+
+        do {
+            return try Self.decoder.decode(Visit.self, from: data)
+        } catch {
+            throw APIError.decoding(error)
+        }
+    }
+
+    func deleteVisit(id: String) async throws {
+        let url = baseURL.appending(path: "visits/\(id)")
+
+        let request = try await makeAuthenticatedRequest(url: url, method: "DELETE")
+        let (_, response) = try await session.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw APIError.invalidResponse
+        }
+
+        // Handle 401 - token expired or invalid
+        if httpResponse.statusCode == 401 {
+            throw APIError.tokenExpired
+        }
+
+        guard (200..<300).contains(httpResponse.statusCode) else {
+            throw APIError.server(
+                status: httpResponse.statusCode,
+                message: nil
+            )
+        }
+    }
+
     // MARK: - Authenticated Requests
 
     private func makeAuthenticatedRequest(
