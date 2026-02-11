@@ -62,6 +62,8 @@ struct HomeView: View {
                 switch destination {
                 case "visitHistory":
                     VisitHistoryView()
+                case "debugFavorites":
+                    DebugFavoritesView()
                 default:
                     Text("Unknown destination")
                 }
@@ -191,6 +193,14 @@ struct QuickActionsView: View {
                     color: .orange
                 ) {
                     // TODO: Navigate to analytics view
+                }
+
+                ActionButton(
+                    title: "Debug Favorites",
+                    icon: "ant.fill",
+                    color: .purple
+                ) {
+                    navigationPath.append("debugFavorites")
                 }
             }
         }

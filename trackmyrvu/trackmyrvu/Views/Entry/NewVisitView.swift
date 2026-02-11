@@ -47,6 +47,27 @@ struct NewVisitView: View {
                         .lineLimit(3...6)
                 }
 
+                // Favorites Section
+                if !viewModel.isNoShow {
+                    Section {
+                        FavoritesView { code in
+                            viewModel.addProcedure(
+                                hcpcs: code.hcpcs,
+                                description: code.description,
+                                statusCode: code.statusCode,
+                                workRVU: code.workRVU
+                            )
+                        }
+                    } header: {
+                        HStack {
+                            Image(systemName: "star.fill")
+                                .font(.caption)
+                                .foregroundStyle(.yellow)
+                            Text("Quick Add from Favorites")
+                        }
+                    }
+                }
+
                 // Procedures Section
                 Section {
                     if viewModel.procedures.isEmpty {

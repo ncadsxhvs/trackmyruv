@@ -150,6 +150,122 @@ actor APIService {
         }
     }
 
+    // MARK: - Favorites
+
+    func fetchFavorites() async throws -> [Favorite] {
+        let url = baseURL.appending(path: "favorites")
+        let request = try await makeAuthenticatedRequest(url: url)
+        print("🌐 [API] Fetching favorites from: \(url)")
+
+        let (data, response) = try await session.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw APIError.invalidResponse
+        }
+
+        print("📡 [API] Response status: \(httpResponse.statusCode)")
+
+        if httpResponse.statusCode == 401 {
+            throw APIError.tokenExpired
+        }
+
+        guard (200..<300).contains(httpResponse.statusCode) else {
+            throw APIError.server(
+                status: httpResponse.statusCode,
+                message: decodeAPIErrorMessage(from: data)
+            )
+        }
+
+        // Debug: Print raw JSON response
+        if let jsonString = String(data: data, encoding: .utf8) {
+            print("📦 [API] Raw response: \(jsonString)")
+        }
+
+        do {
+            let favorites = try Self.decoder.decode([Favorite].self, from: data)
+            print("✅ [API] Decoded \(favorites.count) favorites")
+            return favorites
+        } catch {
+            print("❌ [API] Decoding error: \(error)")
+            throw APIError.decoding(error)
+        }
+    }
+
+    func createFavorite(_ request: CreateFavoriteRequest) async throws -> Favorite {
+        let url = baseURL.appending(path: "favorites")
+
+        let encoder = JSONEncoder()
+        encoder.keyEncodingStrategy = .convertToSnakeCase
+        let body = try encoder.encode(request)
+
+        let urlRequest = try await makeAuthenticatedRequest(url: url, method: "POST", body: body)
+        let (data, response) = try await session.data(for: urlRequest)
+
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw APIError.invalidResponse
+        }
+
+        if httpResponse.statusCode == 401 {
+            throw APIError.tokenExpired
+        }
+
+        guard (200..<300).contains(httpResponse.statusCode) else {
+            throw APIError.server(
+                status: httpResponse.statusCode,
+                message: decodeAPIErrorMessage(from: data)
+            )
+        }
+
+        do {
+            return try Self.decoder.decode(Favorite.self, from: data)
+        } catch {
+            throw APIError.decoding(error)
+        }
+    }
+
+    func deleteFavorite(hcpcs: String) async throws {
+        let url = baseURL.appending(path: "favorites/\(hcpcs)")
+
+        let request = try await makeAuthenticatedRequest(url: url, method: "DELETE")
+        let (_, response) = try await session.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw APIError.invalidResponse
+        }
+
+        if httpResponse.statusCode == 401 {
+            throw APIError.tokenExpired
+        }
+
+        // 204 or 404 both treated as success
+        guard [204, 404].contains(httpResponse.statusCode) || (200..<300).contains(httpResponse.statusCode) else {
+            throw APIError.server(status: httpResponse.statusCode, message: nil)
+        }
+    }
+
+    func reorderFavorites(_ request: ReorderFavoritesRequest) async throws {
+        let url = baseURL.appending(path: "favorites/reorder")
+
+        let encoder = JSONEncoder()
+        encoder.keyEncodingStrategy = .convertToSnakeCase
+        let body = try encoder.encode(request)
+
+        let urlRequest = try await makeAuthenticatedRequest(url: url, method: "PATCH", body: body)
+        let (_, response) = try await session.data(for: urlRequest)
+
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw APIError.invalidResponse
+        }
+
+        if httpResponse.statusCode == 401 {
+            throw APIError.tokenExpired
+        }
+
+        guard (200..<300).contains(httpResponse.statusCode) else {
+            throw APIError.server(status: httpResponse.statusCode, message: nil)
+        }
+    }
+
     // MARK: - Authenticated Requests
 
     private func makeAuthenticatedRequest(
@@ -179,7 +295,31 @@ actor APIService {
     private static let decoder: JSONDecoder = {
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
-        decoder.dateDecodingStrategy = .iso8601
+
+        // Custom date decoding to handle fractional seconds
+        decoder.dateDecodingStrategy = .custom { decoder in
+            let container = try decoder.singleValueContainer()
+            let dateString = try container.decode(String.self)
+
+            // Try ISO8601 with fractional seconds first
+            let formatter = ISO8601DateFormatter()
+            formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+            if let date = formatter.date(from: dateString) {
+                return date
+            }
+
+            // Fallback to standard ISO8601 without fractional seconds
+            formatter.formatOptions = [.withInternetDateTime]
+            if let date = formatter.date(from: dateString) {
+                return date
+            }
+
+            throw DecodingError.dataCorruptedError(
+                in: container,
+                debugDescription: "Cannot decode date string: \(dateString)"
+            )
+        }
+
         return decoder
     }()
 

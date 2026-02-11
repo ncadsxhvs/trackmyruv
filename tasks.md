@@ -2,7 +2,7 @@
 
 **Project:** RVU Tracker iOS Application
 **Version:** 1.0.0 MVP
-**Status:** In Progress (~60% Complete)
+**Status:** In Progress (~75% Complete)
 **Last Updated:** February 8, 2026
 
 ---
@@ -54,6 +54,16 @@
 - RVUSearchView with clean search UI
 - Empty state, loading state, no results state
 
+**Favorites Management**
+- Favorite model with snake_case ↔ camelCase conversion
+- APIService methods (fetchFavorites, createFavorite, deleteFavorite, reorderFavorites)
+- FavoritesViewModel with local caching (UserDefaults)
+- FavoritesView with list layout and drag-to-reorder
+- Integration in NewVisitView for quick-add
+- Star icons in RVUSearchView for toggling favorites
+- Optimistic UI updates
+- Offline support with local cache
+
 **Models & ViewModels**
 - User model (Codable, matches backend)
 - Visit model with flexible decoding (String/Int IDs)
@@ -96,34 +106,24 @@
 
 ### ⭐ Favorites
 
-**Backend API** (requires backend implementation)
-- [ ] `GET /api/favorites` - Fetch user's favorite HCPCS codes
-- [ ] `POST /api/favorites` - Add favorite (body: `{hcpcs, sort_order}`)
-- [ ] `DELETE /api/favorites/{hcpcs}` - Remove favorite
-- [ ] `PUT /api/favorites/reorder` - Update sort order (body: `[{hcpcs, sort_order}]`)
-
-**iOS Implementation**
-- [ ] Add favorites methods to APIService
-- [ ] Create FavoritesViewModel with state management
-- [ ] Create FavoritesView with grid/list layout
-- [ ] Display in EntryView as section above search
-- [ ] Tap favorite to quick-add to visit
-- [ ] Show star icon in search results (filled if favorited)
-- [ ] Toggle favorite from search results
-- [ ] Cache favorites locally (UserDefaults or Swift Data)
-- [ ] Sync with server on app launch and when online
-
-**Drag-and-Drop Reordering**
-- [ ] Implement drag-to-reorder in FavoritesView
-- [ ] Update sort_order locally on drag
-- [ ] Persist order to server via `/api/favorites/reorder`
-- [ ] Show edit mode toggle
-- [ ] Optimistic UI updates
-
-**UI/UX**
-- [ ] Empty state: "No favorites yet"
-- [ ] Visual feedback on add/remove (haptic + animation)
-- [ ] Swipe-to-delete from favorites list
+**Completed** ✅
+- Backend API integration (`GET`, `POST`, `DELETE`, `PATCH /api/favorites`)
+- Favorite model with full Codable support
+- APIService methods for all favorites operations
+- FavoritesViewModel with state management and local caching
+- FavoritesView with list layout
+- Display in EntryView for quick-add to visits
+- Star icons in RVUSearchView (filled if favorited)
+- Toggle favorite from search results
+- Cache favorites locally in UserDefaults
+- Sync with server on app launch
+- Drag-to-reorder implementation with move(fromOffsets:toOffset:)
+- Sort order persistence to server
+- Edit mode toggle
+- Optimistic UI updates
+- Empty state with helpful message
+- Swipe-to-delete from favorites list
+- Loading and error states
 
 ---
 
@@ -242,7 +242,7 @@
 **Next Priority Tasks:**
 1. ✅ ~~Implement edit/delete visit functionality~~ (COMPLETED)
 2. ✅ ~~Bundle and integrate HCPCS code search~~ (COMPLETED)
-3. Build favorites feature (requires backend API)
+3. ✅ ~~Build favorites feature~~ (COMPLETED)
 4. Build analytics dashboard (requires backend API)
 5. Add visit improvements (no-show quick-add, copy feature)
 6. Add offline support with Swift Data

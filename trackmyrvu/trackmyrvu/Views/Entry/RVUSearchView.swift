@@ -14,6 +14,7 @@ struct RVUSearchView: View {
     @State private var searchQuery = ""
     @State private var searchResults: [RVUCode] = []
     @State private var isSearching = false
+    @State private var favoritesViewModel = FavoritesViewModel()
 
     private let cacheService = RVUCacheService.shared
 
@@ -70,6 +71,8 @@ struct RVUSearchView: View {
                 if !cacheService.isLoaded {
                     await cacheService.loadCodes()
                 }
+                // Load favorites
+                await favoritesViewModel.loadFavorites()
             }
             .onChange(of: searchQuery) { oldValue, newValue in
                 performSearch(newValue)
@@ -125,7 +128,16 @@ struct RVUSearchView: View {
                     onSelect(code.hcpcs, code.description, code.statusCode, code.workRVU)
                     dismiss()
                 } label: {
-                    RVUCodeRow(code: code, searchQuery: searchQuery)
+                    RVUCodeRow(
+                        code: code,
+                        searchQuery: searchQuery,
+                        isFavorited: favoritesViewModel.isFavorited(code.hcpcs),
+                        onToggleFavorite: {
+                            Task {
+                                await favoritesViewModel.toggleFavorite(code: code)
+                            }
+                        }
+                    )
                 }
                 .buttonStyle(.plain)
             }
@@ -166,6 +178,8 @@ struct RVUSearchView: View {
 struct RVUCodeRow: View {
     let code: RVUCode
     let searchQuery: String
+    let isFavorited: Bool
+    let onToggleFavorite: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -175,6 +189,14 @@ struct RVUCodeRow: View {
                     .foregroundStyle(.primary)
 
                 Spacer()
+
+                // Star icon for favorites
+                Button(action: onToggleFavorite) {
+                    Image(systemName: isFavorited ? "star.fill" : "star")
+                        .font(.body)
+                        .foregroundStyle(isFavorited ? .yellow : .gray)
+                }
+                .buttonStyle(.plain)
 
                 Text(String(format: "%.2f RVU", code.workRVU))
                     .font(.subheadline)
