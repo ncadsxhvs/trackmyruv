@@ -12,6 +12,7 @@ struct HomeView: View {
     @Bindable var authViewModel: AuthViewModel
     @State private var showSignOutConfirmation = false
     @State private var navigationPath = NavigationPath()
+    @State private var showNewVisit = false
 
     var body: some View {
         NavigationStack(path: $navigationPath) {
@@ -26,7 +27,10 @@ struct HomeView: View {
                     RVUSummaryView()
 
                     // Quick actions section
-                    QuickActionsView(navigationPath: $navigationPath)
+                    QuickActionsView(
+                        navigationPath: $navigationPath,
+                        showNewVisit: $showNewVisit
+                    )
 
                     Spacer(minLength: 20)
                 }
@@ -58,9 +62,14 @@ struct HomeView: View {
                 switch destination {
                 case "visitHistory":
                     VisitHistoryView()
+                case "debugFavorites":
+                    DebugFavoritesView()
                 default:
                     Text("Unknown destination")
                 }
+            }
+            .sheet(isPresented: $showNewVisit) {
+                NewVisitView()
             }
         }
     }
@@ -153,6 +162,7 @@ struct SummaryCard: View {
 
 struct QuickActionsView: View {
     @Binding var navigationPath: NavigationPath
+    @Binding var showNewVisit: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -166,7 +176,7 @@ struct QuickActionsView: View {
                     icon: "plus.circle.fill",
                     color: .blue
                 ) {
-                    // TODO: Navigate to entry view
+                    showNewVisit = true
                 }
 
                 ActionButton(
@@ -183,6 +193,14 @@ struct QuickActionsView: View {
                     color: .orange
                 ) {
                     // TODO: Navigate to analytics view
+                }
+
+                ActionButton(
+                    title: "Debug Favorites",
+                    icon: "ant.fill",
+                    color: .purple
+                ) {
+                    navigationPath.append("debugFavorites")
                 }
             }
         }

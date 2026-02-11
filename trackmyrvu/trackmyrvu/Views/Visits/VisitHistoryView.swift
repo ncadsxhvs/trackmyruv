@@ -9,6 +9,10 @@ import SwiftUI
 
 struct VisitHistoryView: View {
     @State private var viewModel = VisitsViewModel()
+    @State private var visitToDelete: Visit?
+    @State private var showDeleteConfirmation = false
+    @State private var visitToEdit: Visit?
+    @State private var showEditSheet = false
 
     var body: some View {
         List {
@@ -21,6 +25,23 @@ struct VisitHistoryView: View {
             } else {
                 ForEach(viewModel.visits) { visit in
                     VisitRowView(visit: visit)
+                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                            Button(role: .destructive) {
+                                visitToDelete = visit
+                                showDeleteConfirmation = true
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
+                        }
+                        .swipeActions(edge: .leading, allowsFullSwipe: false) {
+                            Button {
+                                visitToEdit = visit
+                                showEditSheet = true
+                            } label: {
+                                Label("Edit", systemImage: "pencil")
+                            }
+                            .tint(.blue)
+                        }
                 }
             }
         }
@@ -32,6 +53,43 @@ struct VisitHistoryView: View {
         .refreshable {
             await viewModel.loadVisits()
         }
+        .sheet(isPresented: $showEditSheet, onDismiss: {
+            Task {
+                await viewModel.loadVisits()
+            }
+        }) {
+            if let visit = visitToEdit {
+                NewVisitView(visit: visit)
+            }
+        }
+        .confirmationDialog(
+            "Delete Visit",
+            isPresented: $showDeleteConfirmation,
+            titleVisibility: .visible,
+            presenting: visitToDelete
+        ) { visit in
+            Button("Delete", role: .destructive) {
+                Task {
+                    await viewModel.deleteVisit(visit)
+                }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: { visit in
+            Text("Are you sure you want to delete this visit from \(formatDate(visit.date))?")
+        }
+    }
+
+    private func formatDate(_ dateString: String) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+
+        if let date = formatter.date(from: dateString) {
+            formatter.dateStyle = .medium
+            formatter.timeStyle = .none
+            return formatter.string(from: date)
+        }
+
+        return dateString
     }
 
     private var loadingRow: some View {

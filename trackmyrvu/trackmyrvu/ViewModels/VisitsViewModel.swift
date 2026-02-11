@@ -34,6 +34,24 @@ class VisitsViewModel {
 
         isLoading = false
     }
+
+    func deleteVisit(_ visit: Visit) async -> Bool {
+        do {
+            // Optimistically remove from list
+            if let index = visits.firstIndex(where: { $0.id == visit.id }) {
+                visits.remove(at: index)
+            }
+
+            // Delete on server
+            try await apiService.deleteVisit(id: visit.id)
+            return true
+        } catch {
+            // Restore on error by reloading
+            await loadVisits()
+            errorMessage = "Failed to delete visit: \(error.localizedDescription)"
+            return false
+        }
+    }
 }
 
 // Helper for comparing APIError
