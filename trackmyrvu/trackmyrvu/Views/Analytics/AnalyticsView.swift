@@ -2,20 +2,17 @@
 //  AnalyticsView.swift
 //  trackmyrvu
 //
-//  Created by Claude on 2026-02-12.
-//
 
 import SwiftUI
 
-/// Simple analytics view showing total RVU from all visits
 struct AnalyticsView: View {
     @State private var viewModel = AnalyticsViewModel()
 
     var body: some View {
         ZStack {
-            if viewModel.isLoading {
+            if viewModel.isLoading && viewModel.allVisits.isEmpty {
                 loadingView
-            } else if let error = viewModel.errorMessage {
+            } else if let error = viewModel.errorMessage, viewModel.allVisits.isEmpty {
                 errorView(error)
             } else {
                 contentView
@@ -26,9 +23,7 @@ struct AnalyticsView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
-                    Task {
-                        await viewModel.refresh()
-                    }
+                    Task { await viewModel.refresh() }
                 } label: {
                     Image(systemName: "arrow.clockwise")
                 }
@@ -36,44 +31,104 @@ struct AnalyticsView: View {
             }
         }
         .task {
-            await viewModel.loadTotalRVU()
+            await viewModel.loadData()
         }
     }
 
-    // MARK: - Content View
+    // MARK: - Content
 
     private var contentView: some View {
-        VStack(spacing: 32) {
-            Spacer()
+        ScrollView {
+            VStack(spacing: 20) {
+                dateRangeSection
+                periodPicker
+                statCards
 
-            // Total RVU Card
-            VStack(spacing: 16) {
-                Image(systemName: "chart.bar.fill")
-                    .font(.system(size: 60))
-                    .foregroundStyle(.blue)
+                Picker("Tab", selection: $viewModel.activeTab) {
+                    ForEach(AnalyticsTab.allCases) { tab in
+                        Text(tab.rawValue).tag(tab)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .padding(.horizontal)
 
-                Text("Total RVU")
-                    .font(.title2)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(.secondary)
+                switch viewModel.activeTab {
+                case .summary:
+                    AnalyticsChartView(
+                        summaries: viewModel.periodSummaries,
+                        selectedIndex: viewModel.selectedPeriodIndex,
+                        onBarTapped: { index in
+                            viewModel.selectBar(at: index)
+                        }
+                    )
+                    .padding(.horizontal)
 
-                Text(String(format: "%.2f", viewModel.totalRVU))
-                    .font(.system(size: 72, weight: .bold, design: .rounded))
-                    .foregroundStyle(.primary)
+                case .breakdown:
+                    HCPCSBreakdownView(
+                        breakdowns: viewModel.periodBreakdowns,
+                        isFiltered: viewModel.selectedPeriodIndex != nil,
+                        onShowAll: { viewModel.clearBarFilter() }
+                    )
+                }
             }
-            .padding(40)
-            .frame(maxWidth: .infinity)
-            .background(Color(.secondarySystemBackground))
-            .cornerRadius(16)
-            .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 4)
-
-            Spacer()
-            Spacer()
+            .padding(.vertical)
         }
-        .padding()
+        .refreshable {
+            await viewModel.refresh()
+        }
     }
 
-    // MARK: - Loading View
+    // MARK: - Date Range
+
+    private var dateRangeSection: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 4) {
+                Text("From")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                DatePicker("", selection: $viewModel.startDate, displayedComponents: .date)
+                    .labelsHidden()
+            }
+            Spacer()
+            VStack(alignment: .trailing, spacing: 4) {
+                Text("To")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                DatePicker("", selection: $viewModel.endDate, displayedComponents: .date)
+                    .labelsHidden()
+            }
+        }
+        .padding(.horizontal)
+    }
+
+    // MARK: - Period Picker
+
+    private var periodPicker: some View {
+        Picker("Period", selection: $viewModel.period) {
+            ForEach(AnalyticsPeriod.allCases) { p in
+                Text(p.rawValue).tag(p)
+            }
+        }
+        .pickerStyle(.segmented)
+        .padding(.horizontal)
+        .onChange(of: viewModel.period) {
+            viewModel.onPeriodChanged()
+        }
+    }
+
+    // MARK: - Stat Cards
+
+    private var statCards: some View {
+        StatCardsView(
+            totalRVU: viewModel.totalRVU,
+            totalEncounters: viewModel.totalEncounters,
+            totalNoShows: viewModel.totalNoShows,
+            avgRVUPerEncounter: viewModel.avgRVUPerEncounter
+        )
+        .padding(.horizontal)
+    }
+
+    // MARK: - Loading
 
     private var loadingView: some View {
         VStack(spacing: 16) {
@@ -84,7 +139,7 @@ struct AnalyticsView: View {
         }
     }
 
-    // MARK: - Error View
+    // MARK: - Error
 
     private func errorView(_ message: String) -> some View {
         VStack(spacing: 16) {
@@ -102,9 +157,7 @@ struct AnalyticsView: View {
                 .padding(.horizontal)
 
             Button("Retry") {
-                Task {
-                    await viewModel.refresh()
-                }
+                Task { await viewModel.refresh() }
             }
             .buttonStyle(.bordered)
         }
@@ -112,8 +165,8 @@ struct AnalyticsView: View {
     }
 }
 
-// MARK: - Preview
-
 #Preview {
-    AnalyticsView()
+    NavigationStack {
+        AnalyticsView()
+    }
 }

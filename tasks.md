@@ -1,30 +1,44 @@
-Feature: Analytics Page – Total RVU
+### 1. Analytics Main Screen
 
-Goal:
-When the "Analytics" button is tapped, navigate to a new screen that displays the total RVU calculated from all visit history.
+**Controls (top):**
+- Period picker: segmented control with Daily / Weekly / Monthly / Yearly
+- Date range: two date pickers (start, end)
+- Default: last 30 days, daily period
+- When Yearly selected: auto-set Jan 1 - Dec 31 of current year
 
-Requirements:
+**View toggle:** Summary | HCPCS Breakdown (segmented control or tab bar)
 
-1. Navigation
-- On Analytics button tap → push/present AnalyticsView.
+### 2. Summary View
 
-2. Data
-- Each record contains: rvu (Double).
-- Compute:
-    totalRVU = sum(all rvu)
+**Bar Chart:**
+- X-axis: period labels (formatted dates)
+- Y-axis: RVU values with 5 gridlines (0%, 25%, 50%, 75%, 100% of max)
+- Bars: blue gradient, tappable to drill into breakdown for that period
+- Line overlay: green trend line connecting bar tops with dot markers
+- Horizontal scroll when >5 data points
 
-Prefer:
-- If backend supports it, call:
-    GET /analytics/total-rvu
-    Response: { total_rvu: Double }
+**Stat Cards (4-column grid on iPad, 2x2 on iPhone):**
 
-3. UI
-- Title: "Total RVU"
-- Display formatted value (2 decimal places).
-- Handle loading + error + empty state (show 0).
+| Card | Color | Value | Subtitle |
+|------|-------|-------|----------|
+| Total RVUs | Blue | `sum(total_work_rvu)` | "Across all periods" |
+| Total Encounters | Green | `sum(total_encounters)` | "Procedure records" |
+| Total No Shows | Orange | `sum(total_no_shows)` | "Missed appointments" |
+| Avg RVU/Encounter | Purple | `total_rvu / total_encounters` | "Efficiency metric" |
 
-Constraints:
-- Minimal code.
-- No duplicate logic.
-- Follow existing architecture (MVVM if present).
-- Keep business logic out of the View.
+### 3. HCPCS Breakdown View
+
+**Table grouped by period:**
+- Section header per period: date label + procedure count
+- Rows sorted by `total_work_rvu` DESC within each period
+- Periods sorted DESC (newest first)
+
+| Column | Alignment | Source |
+|--------|-----------|--------|
+| HCPCS | Left | `hcpcs` |
+| Description | Left, truncated | `description` |
+| Count | Right | `total_quantity` |
+| Total RVU | Right, bold | `total_work_rvu` |
+| Avg RVU | Right | `total_work_rvu / total_quantity` |
+
+**Filtering:** Tapping a bar chart period shows only that period's breakdown. "Show All" clears the filter.
