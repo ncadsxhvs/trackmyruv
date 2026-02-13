@@ -34,6 +34,9 @@ class RVUCacheService {
     private(set) var isLoaded = false
     private(set) var error: String?
 
+    /// Fast HCPCS → workRVU lookup dictionary
+    private var rvuByHCPCS: [String: Double] = [:]
+
     private init() {}
 
     /// Load codes from bundled CSV file
@@ -82,10 +85,37 @@ class RVUCacheService {
             }
 
             self.codes = parsedCodes
+            self.rvuByHCPCS = Dictionary(
+                parsedCodes.map { ($0.hcpcs.uppercased(), $0.workRVU) },
+                uniquingKeysWith: { first, _ in first }
+            )
             self.isLoaded = true
 
         } catch {
             self.error = "Failed to load RVU codes: \(error.localizedDescription)"
+        }
+    }
+
+    /// Look up workRVU for a given HCPCS code
+    func lookupRVU(hcpcs: String) -> Double? {
+        rvuByHCPCS[hcpcs.uppercased()]
+    }
+
+    /// Enrich visits with RVU values from the local CSV cache.
+    /// Replaces procedure workRVU with CSV value when available.
+    func enrichVisitsWithRVU(_ visits: [Visit]) -> [Visit] {
+        guard isLoaded else { return visits }
+
+        return visits.map { visit in
+            var enrichedVisit = visit
+            enrichedVisit.procedures = visit.procedures.map { proc in
+                var enrichedProc = proc
+                if let rvu = lookupRVU(hcpcs: proc.hcpcs) {
+                    enrichedProc.workRVU = rvu
+                }
+                return enrichedProc
+            }
+            return enrichedVisit
         }
     }
 

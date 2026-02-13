@@ -55,6 +55,11 @@ actor APIService {
         do {
             return try Self.decoder.decode([Visit].self, from: data)
         } catch {
+            // Log the actual decoding error and raw response for debugging
+            print("❌ [API] Visit decode error: \(error)")
+            if let jsonString = String(data: data, encoding: .utf8) {
+                print("❌ [API] Raw response (first 500 chars): \(String(jsonString.prefix(500)))")
+            }
             throw APIError.decoding(error)
         }
     }
@@ -356,8 +361,8 @@ enum APIError: LocalizedError {
             } else {
                 return "Request failed with status code \(status)"
             }
-        case .decoding:
-            return "Unable to parse server response"
+        case .decoding(let underlying):
+            return "Unable to parse server response: \(underlying.localizedDescription)"
         case .notAuthenticated:
             return "Not authenticated. Please sign in."
         case .tokenExpired:
