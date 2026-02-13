@@ -10,6 +10,7 @@ import SwiftUI
 /// Home screen for authenticated users
 struct HomeView: View {
     @Bindable var authViewModel: AuthViewModel
+    @State private var visitsViewModel = VisitsViewModel()
     @State private var showSignOutConfirmation = false
     @State private var navigationPath = NavigationPath()
     @State private var showNewVisit = false
@@ -62,6 +63,8 @@ struct HomeView: View {
                 switch destination {
                 case "visitHistory":
                     VisitHistoryView()
+                case "analytics":
+                    AnalyticsView()
                 case "debugFavorites":
                     DebugFavoritesView()
                 default:
@@ -70,6 +73,10 @@ struct HomeView: View {
             }
             .sheet(isPresented: $showNewVisit) {
                 NewVisitView()
+            }
+            .task {
+                // Load visit history when home view appears
+                await visitsViewModel.loadVisits()
             }
         }
     }
@@ -192,7 +199,7 @@ struct QuickActionsView: View {
                     icon: "chart.bar.fill",
                     color: .orange
                 ) {
-                    // TODO: Navigate to analytics view
+                    navigationPath.append("analytics")
                 }
 
                 ActionButton(
