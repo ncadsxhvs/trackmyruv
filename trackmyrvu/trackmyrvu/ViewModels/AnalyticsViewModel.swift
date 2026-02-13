@@ -20,13 +20,17 @@ class AnalyticsViewModel {
 
     private let apiService = APIService.shared
 
-    private static let visitDateFormatter: DateFormatter = {
+    /// Parse the date string from a Visit.
+    /// The backend may return "yyyy-MM-dd" or a full ISO 8601 datetime like "2026-02-12T00:00:00.000Z".
+    private static func parseVisitDate(_ dateString: String) -> Date? {
+        // Extract just the date portion (first 10 chars) regardless of format
+        let dateOnly = String(dateString.prefix(10))
         let f = DateFormatter()
         f.dateFormat = "yyyy-MM-dd"
         f.timeZone = TimeZone(identifier: "GMT")
         f.locale = Locale(identifier: "en_US_POSIX")
-        return f
-    }()
+        return f.date(from: dateOnly)
+    }
 
     // MARK: - Load Data
 
@@ -79,12 +83,14 @@ class AnalyticsViewModel {
     // MARK: - Filtered Visits
 
     var filteredVisits: [Visit] {
-        let cal = Calendar.current
-        let startOfStart = cal.startOfDay(for: startDate)
-        let endOfEnd = cal.date(bySettingHour: 23, minute: 59, second: 59, of: endDate) ?? endDate
+        // Use GMT calendar to match how visit dates are parsed
+        var gmtCal = Calendar(identifier: .gregorian)
+        gmtCal.timeZone = TimeZone(identifier: "GMT")!
+        let startOfStart = gmtCal.startOfDay(for: startDate)
+        let endOfEnd = gmtCal.date(bySettingHour: 23, minute: 59, second: 59, of: endDate) ?? endDate
 
         return allVisits.filter { visit in
-            guard let date = Self.visitDateFormatter.date(from: visit.date) else { return false }
+            guard let date = Self.parseVisitDate(visit.date) else { return false }
             return date >= startOfStart && date <= endOfEnd
         }
     }
@@ -115,7 +121,7 @@ class AnalyticsViewModel {
         var buckets: [Date: (rvu: Double, encounters: Int, noShows: Int)] = [:]
 
         for visit in filteredVisits {
-            guard let date = Self.visitDateFormatter.date(from: visit.date) else { continue }
+            guard let date = Self.parseVisitDate(visit.date) else { continue }
             let key = periodStartDate(for: date, calendar: cal)
 
             var bucket = buckets[key, default: (rvu: 0, encounters: 0, noShows: 0)]
@@ -150,7 +156,7 @@ class AnalyticsViewModel {
         if let idx = selectedPeriodIndex, idx < summaries.count {
             let selectedStart = summaries[idx].periodStart
             visitsToUse = filteredVisits.filter { visit in
-                guard let date = Self.visitDateFormatter.date(from: visit.date) else { return false }
+                guard let date = Self.parseVisitDate(visit.date) else { return false }
                 return periodStartDate(for: date, calendar: cal) == selectedStart
             }
         } else {
@@ -159,7 +165,7 @@ class AnalyticsViewModel {
 
         var periodGroups: [Date: [Visit]] = [:]
         for visit in visitsToUse {
-            guard let date = Self.visitDateFormatter.date(from: visit.date) else { continue }
+            guard let date = Self.parseVisitDate(visit.date) else { continue }
             let key = periodStartDate(for: date, calendar: cal)
             periodGroups[key, default: []].append(visit)
         }
