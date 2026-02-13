@@ -9,6 +9,7 @@ Requirements:
 - On Analytics button tap → push/present AnalyticsView.
 
 2. Data
+- Fetch visit history from existing API.
 - Each record contains: rvu (Double).
 - Compute:
     totalRVU = sum(all rvu)

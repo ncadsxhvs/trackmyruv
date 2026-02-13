@@ -66,10 +66,23 @@ class AuthViewModel {
         isLoading = false
     }
 
-    /// Sign out
+    /// Sign out and clear all cached data
     func signOut() {
         authService.signOut()
         currentUser = nil
         sessionToken = nil
+
+        // Clear all UserDefaults cache
+        clearAllCaches()
+    }
+
+    /// Clear all cached data (visits, favorites, etc.)
+    private func clearAllCaches() {
+        // Clear visits cache
+        UserDefaults.standard.removeObject(forKey: "cached_visits")
+        UserDefaults.standard.removeObject(forKey: "cached_visits_timestamp")
+
+        // Clear any other caches here in the future
+        print("🗑️ [Auth] Cleared all cached data on sign out")
     }
 }

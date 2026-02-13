@@ -296,20 +296,26 @@ actor APIService {
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
 
-        // Custom date decoding to handle fractional seconds
+        // Custom date decoding to handle fractional seconds and date-only formats
         decoder.dateDecodingStrategy = .custom { decoder in
             let container = try decoder.singleValueContainer()
             let dateString = try container.decode(String.self)
 
-            // Try ISO8601 with fractional seconds first
+            // Try ISO8601 with fractional seconds first (for datetime fields)
             let formatter = ISO8601DateFormatter()
             formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
             if let date = formatter.date(from: dateString) {
                 return date
             }
 
-            // Fallback to standard ISO8601 without fractional seconds
+            // Fallback to standard ISO8601 without fractional seconds (for datetime fields)
             formatter.formatOptions = [.withInternetDateTime]
+            if let date = formatter.date(from: dateString) {
+                return date
+            }
+
+            // Try date-only format (YYYY-MM-DD) for analytics periodStart
+            formatter.formatOptions = [.withFullDate]
             if let date = formatter.date(from: dateString) {
                 return date
             }
