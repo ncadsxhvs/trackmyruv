@@ -19,6 +19,7 @@ class AnalyticsViewModel {
     var errorMessage: String?
 
     private let apiService = APIService.shared
+    private let rvuCache = RVUCacheService.shared
 
     /// Parse the date string from a Visit.
     /// The backend may return "yyyy-MM-dd" or a full ISO 8601 datetime like "2026-02-12T00:00:00.000Z".
@@ -39,8 +40,12 @@ class AnalyticsViewModel {
         isLoading = true
         errorMessage = nil
 
+        // Ensure RVU cache is loaded for enrichment
+        await rvuCache.loadCodes()
+
         do {
-            allVisits = try await apiService.fetchVisits()
+            let freshVisits = try await apiService.fetchVisits()
+            allVisits = rvuCache.enrichVisitsWithRVU(freshVisits)
         } catch let error as APIError where error == .tokenExpired {
             errorMessage = "Session expired. Please sign in again."
         } catch {

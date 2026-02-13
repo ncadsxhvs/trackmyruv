@@ -59,6 +59,10 @@ class FavoritesViewModel {
             favorites = try await apiService.fetchFavorites()
             print("✅ [Favorites] Loaded \(favorites.count) favorites: \(favorites.map { $0.hcpcs })")
             saveToCache()
+        } catch is CancellationError {
+            print("⚠️ [Favorites] Request cancelled (view recreated)")
+        } catch let urlError as URLError where urlError.code == .cancelled {
+            print("⚠️ [Favorites] URL request cancelled (view recreated)")
         } catch let error as APIError where error == .tokenExpired {
             print("❌ [Favorites] Token expired")
             errorMessage = "Session expired. Please sign in again."

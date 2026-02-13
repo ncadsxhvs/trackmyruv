@@ -15,7 +15,7 @@ struct Visit: Codable, Identifiable, Equatable {
     let time: String?
     let notes: String?
     let isNoShow: Bool
-    let procedures: [VisitProcedure]
+    var procedures: [VisitProcedure]
     let createdAt: Date?
     let updatedAt: Date?
 
@@ -83,7 +83,7 @@ struct VisitProcedure: Codable, Identifiable, Equatable {
     let hcpcs: String
     let description: String
     let statusCode: String
-    let workRVU: Double
+    var workRVU: Double
     let quantity: Int
 
     enum CodingKeys: String, CodingKey {
@@ -118,10 +118,10 @@ struct VisitProcedure: Codable, Identifiable, Equatable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         self.id = try container.decodeStringOrInt(forKey: .id)
-        self.visitId = try container.decodeStringOrInt(forKey: .visitId)
+        self.visitId = (try? container.decodeStringOrInt(forKey: .visitId)) ?? ""
         self.hcpcs = try container.decode(String.self, forKey: .hcpcs)
-        self.description = try container.decode(String.self, forKey: .description)
-        self.statusCode = try container.decode(String.self, forKey: .statusCode)
+        self.description = try container.decodeIfPresent(String.self, forKey: .description) ?? ""
+        self.statusCode = try container.decodeIfPresent(String.self, forKey: .statusCode) ?? ""
         self.workRVU = try container.decodeIfPresent(Double.self, forKey: .workRVU) ?? 0
         self.quantity = try container.decodeIfPresent(Int.self, forKey: .quantity) ?? 1
     }

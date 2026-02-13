@@ -35,6 +35,7 @@ struct FavoritesView: View {
         .task(id: hasLoaded) {
             guard !hasLoaded else { return }
             print("🔄 [FavoritesView] Starting initial load...")
+            await cacheService.loadCodes()
             await viewModel.loadFavorites()
             hasLoaded = true
         }

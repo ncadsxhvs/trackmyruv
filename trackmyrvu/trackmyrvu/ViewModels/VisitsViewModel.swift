@@ -16,6 +16,7 @@ class VisitsViewModel {
     var errorMessage: String?
 
     private let apiService = APIService.shared
+    private let rvuCache = RVUCacheService.shared
     private let cacheKey = "cached_visits"
     private let cacheTimestampKey = "cached_visits_timestamp"
     private let cacheExpirationSeconds: TimeInterval = 300 // 5 minutes
@@ -26,14 +27,17 @@ class VisitsViewModel {
         isLoading = true
         errorMessage = nil
 
+        // Ensure RVU cache is loaded for enrichment
+        await rvuCache.loadCodes()
+
         // Load from cache first for instant display
         loadFromCache()
 
         // Then fetch fresh data from API
         do {
             let freshVisits = try await apiService.fetchVisits()
-            visits = freshVisits
-            saveToCache(freshVisits)
+            visits = rvuCache.enrichVisitsWithRVU(freshVisits)
+            saveToCache(visits)
         } catch let error as APIError where error == .tokenExpired {
             // Token expired, user should be signed out automatically
             errorMessage = "Session expired. Please sign in again."
