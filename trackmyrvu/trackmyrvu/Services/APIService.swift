@@ -55,11 +55,6 @@ actor APIService {
         do {
             return try Self.decoder.decode([Visit].self, from: data)
         } catch {
-            // Log the actual decoding error and raw response for debugging
-            print("❌ [API] Visit decode error: \(error)")
-            if let jsonString = String(data: data, encoding: .utf8) {
-                print("❌ [API] Raw response (first 500 chars): \(String(jsonString.prefix(500)))")
-            }
             throw APIError.decoding(error)
         }
     }
@@ -160,15 +155,11 @@ actor APIService {
     func fetchFavorites() async throws -> [Favorite] {
         let url = baseURL.appending(path: "favorites")
         let request = try await makeAuthenticatedRequest(url: url)
-        print("🌐 [API] Fetching favorites from: \(url)")
-
         let (data, response) = try await session.data(for: request)
 
         guard let httpResponse = response as? HTTPURLResponse else {
             throw APIError.invalidResponse
         }
-
-        print("📡 [API] Response status: \(httpResponse.statusCode)")
 
         if httpResponse.statusCode == 401 {
             throw APIError.tokenExpired
@@ -181,17 +172,9 @@ actor APIService {
             )
         }
 
-        // Debug: Print raw JSON response
-        if let jsonString = String(data: data, encoding: .utf8) {
-            print("📦 [API] Raw response: \(jsonString)")
-        }
-
         do {
-            let favorites = try Self.decoder.decode([Favorite].self, from: data)
-            print("✅ [API] Decoded \(favorites.count) favorites")
-            return favorites
+            return try Self.decoder.decode([Favorite].self, from: data)
         } catch {
-            print("❌ [API] Decoding error: \(error)")
             throw APIError.decoding(error)
         }
     }

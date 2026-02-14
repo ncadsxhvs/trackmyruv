@@ -24,71 +24,46 @@ Native iOS application for tracking medical procedure RVUs (Relative Value Units
 
 ## Project Structure
 
-**Actual Structure (Current Implementation):**
 ```
 trackmyrvu/
-├── trackmyrvuApp.swift          # App entry point
+├── trackmyrvuApp.swift              # App entry point
+├── Date+Extensions.swift            # Date formatting utilities
 ├── Models/
-│   ├── User.swift               # User model (matches backend API)
-│   └── Visit.swift              # Visit & VisitProcedure models
+│   ├── User.swift                   # User model (matches backend API)
+│   ├── Visit.swift                  # Visit & VisitProcedure models (Codable, mutable for RVU enrichment)
+│   └── Favorite.swift               # Favorite HCPCS code model
 ├── ViewModels/
-│   ├── AuthViewModel.swift      # Authentication state (@Observable)
-│   └── VisitsViewModel.swift    # Visits list loading logic
+│   ├── AuthViewModel.swift          # Authentication state (@Observable)
+│   ├── VisitsViewModel.swift        # Visits list with caching + RVU enrichment
+│   ├── EntryViewModel.swift         # New visit entry logic
+│   ├── AnalyticsViewModel.swift     # Analytics calculations (client-side from visits)
+│   └── FavoritesViewModel.swift     # Favorites CRUD with cancellation handling
 ├── Views/
 │   ├── Auth/
-│   │   └── SignInView.swift     # Google Sign-In screen
+│   │   └── SignInView.swift         # Google Sign-In screen
 │   ├── Home/
-│   │   └── HomeView.swift       # Authenticated home screen
-│   └── Visits/
-│       └── VisitHistoryView.swift # Visit list view
-├── Services/
-│   ├── AuthService.swift        # Google Sign-In + JWT auth
-│   └── APIService.swift         # Backend API client (JWT tokens)
-└── Info.plist                   # OAuth client IDs
-```
-
-**Planned Structure (Future):**
-```
-trackmyrvu/
-├── trackmyrvuApp.swift         # App entry point
-├── Models/
-│   ├── Visit.swift             # Visit data model (Swift Data)
-│   ├── Procedure.swift          # Procedure data model
-│   ├── RVUCode.swift           # HCPCS code model
-│   └── User.swift              # User model
-├── ViewModels/
-│   ├── VisitsViewModel.swift   # Visits list & CRUD logic
-│   ├── EntryViewModel.swift    # New visit entry logic
-│   ├── AnalyticsViewModel.swift # Analytics calculations
-│   └── AuthViewModel.swift     # Authentication logic
-├── Views/
-│   ├── ContentView.swift       # Main tab navigation
-│   ├── VisitsList/
-│   │   ├── VisitsListView.swift
-│   │   └── VisitRowView.swift
+│   │   └── HomeView.swift           # Tab navigation + home screen
+│   ├── Visits/
+│   │   └── VisitHistoryView.swift   # Visit list with swipe-to-delete
 │   ├── Entry/
-│   │   ├── EntryView.swift
-│   │   ├── RVUSearchView.swift
-│   │   └── FavoritesView.swift
-│   ├── Analytics/
-│   │   ├── AnalyticsView.swift
-│   │   └── ChartView.swift
-│   └── Auth/
-│       └── SignInView.swift
+│   │   ├── NewVisitView.swift       # Visit creation/editing form
+│   │   └── RVUSearchView.swift      # HCPCS code search
+│   ├── Favorites/
+│   │   └── FavoritesView.swift      # Favorites list with reorder
+│   └── Analytics/
+│       ├── AnalyticsView.swift      # Full analytics dashboard
+│       ├── AnalyticsChartView.swift  # Bar chart + trend line (SwiftUI Charts)
+│       ├── AnalyticsModels.swift     # ChartDataPoint, HCPCSBreakdownItem models
+│       ├── StatCardsView.swift       # Summary stat cards (RVU, encounters, etc.)
+│       └── HCPCSBreakdownView.swift  # HCPCS breakdown table by period
 ├── Services/
-│   ├── APIService.swift        # Backend API client
-│   ├── SyncService.swift       # Offline sync logic
-│   ├── RVUCacheService.swift   # Local HCPCS cache (16K codes)
-│   └── AuthService.swift       # Auth token management
-├── Utilities/
-│   ├── DateUtils.swift         # Timezone-independent dates
-│   ├── Constants.swift         # App constants
-│   └── Extensions/
-│       ├── Date+Extensions.swift
-│       └── View+Extensions.swift
-└── Resources/
-    ├── Assets.xcassets
-    └── rvu_codes.json          # Bundled HCPCS codes (16K)
+│   ├── APIService.swift             # Backend API client (actor, JWT Bearer auth)
+│   ├── AuthService.swift            # Google Sign-In + Keychain JWT storage
+│   └── RVUCacheService.swift        # Bundled CSV cache (16K HCPCS codes) + RVU enrichment
+├── Resources/
+│   ├── rvu.csv                      # Bundled HCPCS codes with work RVU values
+│   └── Assets.xcassets/             # App icons, accent color
+└── Info.plist                       # OAuth client IDs
 ```
 
 ## Core Features
@@ -105,7 +80,7 @@ trackmyrvu/
 - **Token management** - Handles expiration, auto sign-out on 401
 - **Shared user accounts** - Same backend as web application
 
-### 2. Quick Visit Entry (Primary Mobile Use Case)
+### 2. Quick Visit Entry ✅ IMPLEMENTED
 - Fast procedure logging on-the-go
 - HCPCS code search with local cache (instant, works offline)
 - Support for multiple procedures per visit
@@ -115,76 +90,70 @@ trackmyrvu/
 - Favorites for frequently used HCPCS codes
 - Drag-to-reorder favorites
 
-### 3. Visit History
+### 3. Visit History ✅ IMPLEMENTED
 - List view of all visits (ordered by date DESC)
 - Expandable procedure details
-- Total RVU per visit
+- Total RVU per visit (enriched from local CSV)
 - Date and time display (12-hour format)
 - Swipe-to-delete with confirmation
 - Edit existing visits (add/remove procedures, update quantities)
-- Copy visit to create similar entry
 - No-show visit tracking (orange badge)
 - Pull-to-refresh
+- Local caching with 5-minute expiration
 
-### 4. Analytics Dashboard
+### 4. Analytics Dashboard ✅ IMPLEMENTED
 - Date range filtering (last 7/30/90 days, custom)
 - Period grouping: Daily, Weekly, Monthly, Yearly
-- RVU chart over time (SwiftUI Charts)
-- HCPCS breakdown table (grouped by date)
-- Summary metrics:
-  - Total RVUs
-  - Total Encounters
-  - Total No Shows
-  - Average RVU per Encounter
-- Export analytics as PDF (share sheet)
+- RVU bar chart + trend line (SwiftUI Charts)
+- HCPCS breakdown table (grouped by period)
+- Summary stat cards: Total RVUs, Encounters, No Shows, Avg RVU/Encounter
+- Client-side computation from visit data (no separate analytics API needed)
 
-### 5. Offline Support
-- **Local-first architecture**
-- All visits stored in Swift Data
-- All 16,852 HCPCS codes cached locally (~5MB)
-- Create/edit/delete visits offline
-- Automatic sync when online
-- Conflict resolution (server wins, local changes merged)
-- Sync status indicator
-- Manual sync trigger
+### 5. Favorites ✅ IMPLEMENTED
+- Add/remove favorite HCPCS codes
+- Drag-to-reorder with server sync
+- Local cache with versioned invalidation
+- Cancellation-safe loading (handles SwiftUI view recreation)
 
-## Data Models (Swift Data)
+### 6. Offline Support (NOT YET IMPLEMENTED)
+- All 16,852 HCPCS codes cached locally via bundled CSV
+- Visit caching in UserDefaults (5-minute TTL)
+- Full offline CRUD not yet implemented
+- No sync service yet
+
+## Data Models (Codable structs, not Swift Data)
 
 ### Visit Model
 ```swift
-@Model
-final class Visit {
-    @Attribute(.unique) var id: UUID
-    var userId: String
-    var date: Date
-    var time: Date?
-    var notes: String?
-    var isNoShow: Bool
-    @Relationship(deleteRule: .cascade) var procedures: [Procedure]
-    var createdAt: Date
-    var updatedAt: Date
-    var syncStatus: SyncStatus // .synced, .pendingSync, .conflict
+struct Visit: Codable, Identifiable {
+    let id: String
+    let userId: String
+    let dateOfService: String      // "YYYY-MM-DD" or full ISO 8601
+    let isNoShow: Bool
+    let notes: String?
+    var procedures: [VisitProcedure]  // mutable for RVU enrichment
+    let createdAt: Date
+    let updatedAt: Date
 
     var totalRVU: Double {
         procedures.reduce(0) { $0 + ($1.workRVU * Double($1.quantity)) }
     }
 }
 
-@Model
-final class Procedure {
-    var id: UUID
-    var hcpcs: String
-    var description: String
-    var statusCode: String
-    var workRVU: Double
-    var quantity: Int
-    var visit: Visit?
+struct VisitProcedure: Codable, Identifiable {
+    let id: String
+    var visitId: String            // decodeIfPresent with default ""
+    let hcpcs: String
+    var description: String        // decodeIfPresent with default ""
+    var statusCode: String         // decodeIfPresent with default ""
+    var workRVU: Double            // mutable - enriched from local CSV
+    let quantity: Int
 }
 ```
 
 ### RVU Code Model
 ```swift
-struct RVUCode: Codable, Identifiable {
+struct RVUCode: Codable, Identifiable, Hashable {
     let id: Int
     let hcpcs: String
     let description: String
@@ -192,6 +161,11 @@ struct RVUCode: Codable, Identifiable {
     let workRVU: Double
 }
 ```
+
+### Important: RVU Enrichment Pattern
+The backend API returns `workRVU = 0` for procedures. The app enriches RVU values
+from the bundled `rvu.csv` file via `RVUCacheService.enrichVisitsWithRVU(_:)`.
+This enrichment runs after every API fetch in both `VisitsViewModel` and `AnalyticsViewModel`.
 
 ## API Integration
 
@@ -281,37 +255,11 @@ extension Date {
 ## HCPCS Code Cache
 
 ### Implementation
-- **Bundled Resource:** `rvu_codes.json` included in app bundle (~5MB)
-- **First Launch:** Load into Swift Data for fast search
-- **Search:** Local query using Swift Data predicates
-- **Update:** Periodic check for RVU code updates from server
-
-```swift
-@MainActor
-class RVUCacheService: ObservableObject {
-    static let shared = RVUCacheService()
-
-    @Published var isLoaded = false
-
-    func loadCodes() async throws {
-        guard let url = Bundle.main.url(forResource: "rvu_codes", withExtension: "json") else {
-            throw CacheError.resourceNotFound
-        }
-
-        let data = try Data(contentsOf: url)
-        let codes = try JSONDecoder().decode([RVUCode].self, from: data)
-
-        // Store in UserDefaults or Swift Data for fast search
-        // Implementation details...
-
-        isLoaded = true
-    }
-
-    func search(query: String, limit: Int = 100) -> [RVUCode] {
-        // Fast local search implementation
-    }
-}
-```
+- **Bundled Resource:** `rvu.csv` included in app bundle
+- **On Load:** Parsed into `[RVUCode]` array and `[String: Double]` dictionary for O(1) HCPCS→RVU lookups
+- **Search:** In-memory filter on `codes` array (case-insensitive, matches HCPCS or description)
+- **Enrichment:** `enrichVisitsWithRVU(_:)` replaces procedure `workRVU` values from local cache
+- **Singleton:** `RVUCacheService.shared`, must call `loadCodes()` before use
 
 ## Authentication Flow
 
@@ -360,55 +308,11 @@ class AuthService {
 ## SwiftUI Architecture
 
 ### MVVM Pattern
-- **Models:** Swift Data entities (Visit, Procedure)
-- **ViewModels:** ObservableObject classes with @Published properties
-- **Views:** SwiftUI views that observe ViewModels
-
-### Example: Visits List
-
-```swift
-@MainActor
-class VisitsViewModel: ObservableObject {
-    @Published var visits: [Visit] = []
-    @Published var isLoading = false
-    @Published var error: Error?
-
-    private let apiService = APIService.shared
-    private let modelContext: ModelContext
-
-    init(modelContext: ModelContext) {
-        self.modelContext = modelContext
-    }
-
-    func fetchVisits() async {
-        isLoading = true
-        defer { isLoading = false }
-
-        do {
-            // Try API first
-            let dtos = try await apiService.fetchVisits()
-            // Update local database
-            // Fetch from Swift Data
-            let descriptor = FetchDescriptor<Visit>(sortBy: [SortDescriptor(\.createdAt, order: .reverse)])
-            visits = try modelContext.fetch(descriptor)
-        } catch {
-            // Fall back to local data if offline
-            self.error = error
-            loadLocalVisits()
-        }
-    }
-
-    func deleteVisit(_ visit: Visit) async {
-        modelContext.delete(visit)
-        try? modelContext.save()
-
-        // Sync deletion to server
-        Task {
-            try? await apiService.deleteVisit(id: visit.id)
-        }
-    }
-}
-```
+- **Models:** Codable structs (Visit, VisitProcedure, Favorite, RVUCode)
+- **ViewModels:** `@Observable` classes (Swift 5.9 Observation macro, NOT ObservableObject)
+- **Views:** SwiftUI views using `@State` for owned VMs
+- **Services:** `actor APIService` (thread-safe), `RVUCacheService` (singleton)
+- **Caching:** UserDefaults with versioned cache invalidation
 
 ## Dependencies (Swift Package Manager)
 
@@ -490,7 +394,7 @@ open RVUTracker.xcodeproj
 - **Code Style:** Swift standard library conventions
 - **Naming:** Descriptive, avoid abbreviations
 - **Architecture:** MVVM with clear separation of concerns
-- **State:** SwiftUI @State, @StateObject, @EnvironmentObject
+- **State:** SwiftUI @State with @Observable ViewModels (NOT @StateObject/@ObservableObject)
 - **Async:** Use async/await, avoid completion handlers
 - **Error Handling:** Proper do-try-catch, user-friendly messages
 - **Date Handling:** ALWAYS use timezone-independent utilities
@@ -515,85 +419,39 @@ open RVUTracker.xcodeproj
 
 ## Current Status
 
-**✅ AUTHENTICATION IMPLEMENTED - IN PROGRESS**
+**Core features implemented. Approaching App Store readiness.**
 
 ### Completed Features:
+1. ✅ **Google Sign-In Authentication** - Full flow with backend JWT, Keychain storage, session persistence
+2. ✅ **Visit History** - List view, swipe-to-delete, pull-to-refresh, local caching (5-min TTL)
+3. ✅ **Visit Creation/Editing** - Multi-procedure support, HCPCS search, quantity, notes, no-show toggle
+4. ✅ **Favorites** - Add/remove/reorder HCPCS favorites, versioned cache, cancellation-safe
+5. ✅ **Analytics Dashboard** - Date range + period filtering, bar chart with trend line, stat cards, HCPCS breakdown
+6. ✅ **RVU Enrichment** - Bundled CSV provides accurate work RVU values (API returns 0)
+7. ✅ **HCPCS Code Search** - 16K+ codes cached locally from bundled CSV, instant search
 
-#### 1. **Google Sign-In Authentication** ✅
-- **Location**: `/Users/ddctu/git/track_my_rvu_ios/trackmyrvu/`
-- **Bundle ID**: `trackmyrvuios.trackmyrvu`
-- **Backend**: Production API at `https://www.trackmyrvu.com/api`
-
-**Implementation Details:**
-- **AuthService.swift**: Complete mobile authentication flow
-  - Google Sign-In → ID token exchange → Backend JWT token
-  - JWT stored securely in iOS Keychain (not UserDefaults)
-  - Session restoration on app launch
-  - Token expiration handling (30-day tokens)
-
-- **User Model**: Matches backend API response
-  - Fields: `id`, `email`, `name?`, `image?`
-  - Codable for JSON serialization
-  - Computed properties: `displayName`, `profileImageURL`
-
-- **AuthViewModel**: Observable authentication state (@Observable)
-  - Properties: `currentUser`, `sessionToken`, `isLoading`, `errorMessage`
-  - Methods: `signIn()`, `signOut()`, `checkAuthStatus()`
-  - Session persistence across app restarts
-
-- **APIService**: JWT Bearer token authentication
-  - All requests include `Authorization: Bearer <token>` header
-  - Automatic token retrieval from Keychain
-  - Handles 401 (token expired) errors
-
-**OAuth Configuration (Info.plist):**
+### OAuth Configuration (Info.plist):
 ```xml
 <key>GIDClientID</key>
 <string>386826311054-ltu6cla9v0beb3k0p68o96ec5hfqv6ps.apps.googleusercontent.com</string>
 <key>GIDServerClientID</key>
 <string>386826311054-hic8jh474jh1aiq6dclp2oor9mgc981l.apps.googleusercontent.com</string>
 ```
-
-**Why Two Client IDs:**
-- `GIDClientID` (iOS): Used for sign-in flow (supports custom URL schemes)
+- `GIDClientID` (iOS): Used for sign-in flow
 - `GIDServerClientID` (Web): ID token audience for backend verification
-- Backend verifies tokens using the server/web client ID
-
-**Backend Endpoint Used:**
-- `POST /api/auth/mobile/google` - Exchanges Google ID token for JWT
-- Reference: `/Users/ddctu/git/hh/MOBILE_AUTH.md`
-
-#### 2. **UI Views** ✅
-- **SignInView**: Google Sign-In button, loading states, error handling
-- **HomeView**: Profile display, RVU summary cards (placeholders), quick actions
-- **VisitHistoryView**: List of visits with procedures (ready for API data)
-
-#### 3. **API Integration** ✅
-- **APIService**: Configured for production backend
-- **VisitsViewModel**: Fetches visits from `/api/visits` endpoint
-- **Visit Model**: Matches backend schema with procedures
-
-### In Progress:
-
-- Visit history data fetching (API ready, needs testing)
-- Error handling and retry logic
-- Offline mode (not yet implemented)
+- Backend endpoint: `POST /api/auth/mobile/google`
 
 ### Next Steps:
-1. ~~Implement authentication (Google Sign-In)~~ ✅
-2. Test end-to-end authentication flow
-3. Implement visit creation (POST /api/visits)
-4. Add visit editing and deletion
-5. Implement offline support with Swift Data
-6. Build analytics dashboard
-7. Implement sync service for offline changes
-8. Bundle HCPCS codes (~5MB JSON)
-9. Implement Apple Sign-In (App Store requirement)
-10. Testing and polish
-11. App Store submission
+1. Implement Apple Sign-In (required for App Store)
+2. Implement full offline support with Swift Data
+3. Build sync service for offline changes
+4. Testing and polish
+5. App Store submission
 
 ### Known Issues:
-- None currently - authentication working as expected
+- Backend API returns `workRVU = 0` for procedures; app enriches from local CSV
+- No offline CRUD yet (reads work offline via cache, writes require network)
+- Date parsing handles both `YYYY-MM-DD` and full ISO 8601 formats from backend
 
 ---
 

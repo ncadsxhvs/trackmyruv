@@ -83,6 +83,5 @@ class AuthViewModel {
         UserDefaults.standard.removeObject(forKey: "cached_visits_timestamp")
 
         // Clear any other caches here in the future
-        print("🗑️ [Auth] Cleared all cached data on sign out")
     }
 }
