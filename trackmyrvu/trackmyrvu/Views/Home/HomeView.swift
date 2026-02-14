@@ -19,13 +19,8 @@ struct HomeView: View {
         NavigationStack(path: $navigationPath) {
             ScrollView {
                 VStack(spacing: 24) {
-                    // Profile header
-                    if let user = authViewModel.currentUser {
-                        ProfileHeaderView(user: user)
-                    }
-
                     // RVU summary section
-                    RVUSummaryView()
+                    RVUSummaryView(visits: visitsViewModel.visits, isLoading: visitsViewModel.isLoading)
 
                     // Quick actions section
                     QuickActionsView(
@@ -69,7 +64,9 @@ struct HomeView: View {
                     Text("Unknown destination")
                 }
             }
-            .sheet(isPresented: $showNewVisit) {
+            .sheet(isPresented: $showNewVisit, onDismiss: {
+                Task { await visitsViewModel.loadVisits() }
+            }) {
                 NewVisitView()
             }
             .task {
@@ -80,59 +77,56 @@ struct HomeView: View {
     }
 }
 
-// MARK: - Profile Header
-
-struct ProfileHeaderView: View {
-    let user: User
-
-    var body: some View {
-        VStack(spacing: 16) {
-            // Profile image
-            AsyncImage(url: URL(string: user.profileImageURL ?? "")) { image in
-                image
-                    .resizable()
-                    .scaledToFill()
-            } placeholder: {
-                Image(systemName: "person.circle.fill")
-                    .resizable()
-                    .foregroundStyle(.gray)
-            }
-            .frame(width: 80, height: 80)
-            .clipShape(Circle())
-
-            // User info
-            VStack(spacing: 4) {
-                Text(user.displayName)
-                    .font(.title2)
-                    .fontWeight(.semibold)
-
-                Text(user.email)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-            }
-        }
-        .frame(maxWidth: .infinity)
-        .padding()
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(.ultraThinMaterial)
-        )
-    }
-}
-
 // MARK: - RVU Summary
 
 struct RVUSummaryView: View {
+    let visits: [Visit]
+    let isLoading: Bool
+
+    private var totalRVU: Double {
+        visits.reduce(0) { $0 + $1.totalWorkRVU }
+    }
+
+    private var thisMonthRVU: Double {
+        let calendar = Calendar.current
+        let now = Date()
+        let year = calendar.component(.year, from: now)
+        let month = calendar.component(.month, from: now)
+
+        return visits.filter { visit in
+            // Parse date string (YYYY-MM-DD or full ISO)
+            let dateOnly = String(visit.date.prefix(10))
+            let parts = dateOnly.split(separator: "-")
+            guard parts.count == 3,
+                  let y = Int(parts[0]), let m = Int(parts[1]) else { return false }
+            return y == year && m == month
+        }
+        .reduce(0) { $0 + $1.totalWorkRVU }
+    }
+
+    private var totalEncounters: Int {
+        visits.filter { !$0.isNoShow }.count
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Summary")
                 .font(.headline)
                 .foregroundStyle(.primary)
 
-            HStack(spacing: 12) {
-                SummaryCard(title: "Total RVUs", value: "—", color: .blue)
-                SummaryCard(title: "This Month", value: "—", color: .green)
-                SummaryCard(title: "Encounters", value: "—", color: .orange)
+            if isLoading && visits.isEmpty {
+                HStack(spacing: 12) {
+                    SummaryCard(title: "Total RVUs", value: "—", color: .blue)
+                    SummaryCard(title: "This Month", value: "—", color: .green)
+                    SummaryCard(title: "Encounters", value: "—", color: .orange)
+                }
+                .redacted(reason: .placeholder)
+            } else {
+                HStack(spacing: 12) {
+                    SummaryCard(title: "Total RVUs", value: String(format: "%.1f", totalRVU), color: .blue)
+                    SummaryCard(title: "This Month", value: String(format: "%.1f", thisMonthRVU), color: .green)
+                    SummaryCard(title: "Encounters", value: "\(totalEncounters)", color: .orange)
+                }
             }
         }
     }
