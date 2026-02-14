@@ -15,16 +15,15 @@ class FavoritesViewModel {
     private(set) var errorMessage: String?
 
     private let apiService = APIService.shared
-    private let userDefaults = UserDefaults.standard
     private let cacheKey = "cached_favorites"
     private let cacheVersionKey = "cached_favorites_version"
-    private let currentCacheVersion = 4
+    private let currentCacheVersion = 5  // Bumped for Keychain migration
 
     init() {
-        let cachedVersion = userDefaults.integer(forKey: cacheVersionKey)
+        let cachedVersion = UserDefaults.standard.integer(forKey: cacheVersionKey)
         if cachedVersion != currentCacheVersion {
             clearCache()
-            userDefaults.set(currentCacheVersion, forKey: cacheVersionKey)
+            UserDefaults.standard.set(currentCacheVersion, forKey: cacheVersionKey)
         } else {
             loadFromCache()
         }
@@ -122,7 +121,7 @@ class FavoritesViewModel {
         Task {
             for index in offsets {
                 let hcpcs = favorites[index].hcpcs
-                await removeFavorite(hcpcs: hcpcs)
+                _ = await removeFavorite(hcpcs: hcpcs)
             }
         }
     }
@@ -148,17 +147,17 @@ class FavoritesViewModel {
         }
     }
 
-    // MARK: - Local Cache
+    // MARK: - Secure Cache (Keychain)
 
     private func saveToCache() {
         if let encoded = try? JSONEncoder().encode(favorites) {
-            userDefaults.set(encoded, forKey: cacheKey)
-            userDefaults.set(currentCacheVersion, forKey: cacheVersionKey)
+            SecureCache.save(data: encoded, forKey: cacheKey)
+            UserDefaults.standard.set(currentCacheVersion, forKey: cacheVersionKey)
         }
     }
 
     private func loadFromCache() {
-        guard let data = userDefaults.data(forKey: cacheKey) else { return }
+        guard let data = SecureCache.load(forKey: cacheKey) else { return }
 
         do {
             favorites = try JSONDecoder().decode([Favorite].self, from: data)
@@ -168,7 +167,7 @@ class FavoritesViewModel {
     }
 
     func clearCache() {
-        userDefaults.removeObject(forKey: cacheKey)
+        SecureCache.delete(forKey: cacheKey)
         favorites = []
     }
 }

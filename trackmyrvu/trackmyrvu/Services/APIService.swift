@@ -15,17 +15,14 @@ actor APIService {
     private let session: URLSession
 
     init() {
-        #if DEBUG
-        // Use production API when local backend is not available
-        // Change to http://localhost:3001/api when running backend locally
-        let base = URL(string: "https://www.trackmyrvu.com/api")!
-        #else
-        let base = URL(string: "https://www.trackmyrvu.com/api")!
-        #endif
-
+        guard let base = URL(string: "https://www.trackmyrvu.com/api") else {
+            fatalError("Invalid API base URL configuration")
+        }
         self.baseURL = base
 
         let config = URLSessionConfiguration.default
+        config.timeoutIntervalForRequest = 30
+        config.timeoutIntervalForResource = 60
         self.session = URLSession(configuration: config)
     }
 
@@ -94,7 +91,7 @@ actor APIService {
     }
 
     func updateVisit(id: String, _ visitRequest: CreateVisitRequest) async throws -> Visit {
-        let url = baseURL.appending(path: "visits/\(id)")
+        let url = baseURL.appending(path: "visits/\(encodedPath(id))")
 
         // Encode request body
         let encoder = JSONEncoder()
@@ -128,7 +125,7 @@ actor APIService {
     }
 
     func deleteVisit(id: String) async throws {
-        let url = baseURL.appending(path: "visits/\(id)")
+        let url = baseURL.appending(path: "visits/\(encodedPath(id))")
 
         let request = try await makeAuthenticatedRequest(url: url, method: "DELETE")
         let (_, response) = try await session.data(for: request)
@@ -212,7 +209,7 @@ actor APIService {
     }
 
     func deleteFavorite(hcpcs: String) async throws {
-        let url = baseURL.appending(path: "favorites/\(hcpcs)")
+        let url = baseURL.appending(path: "favorites/\(encodedPath(hcpcs))")
 
         let request = try await makeAuthenticatedRequest(url: url, method: "DELETE")
         let (_, response) = try await session.data(for: request)
@@ -276,6 +273,12 @@ actor APIService {
         }
 
         return request
+    }
+
+    // MARK: - URL Safety
+
+    private func encodedPath(_ component: String) -> String {
+        component.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? component
     }
 
     // MARK: - Helpers

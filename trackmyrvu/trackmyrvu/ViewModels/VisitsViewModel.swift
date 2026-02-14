@@ -73,22 +73,23 @@ class VisitsViewModel {
         }
     }
 
-    // MARK: - Cache Management
+    // MARK: - Secure Cache Management (Keychain)
 
     private func loadFromCache() {
-        guard let data = UserDefaults.standard.data(forKey: cacheKey) else { return }
-
+        // Check timestamp first (stored in UserDefaults since it's not sensitive)
         if let timestamp = UserDefaults.standard.object(forKey: cacheTimestampKey) as? Date {
             let age = Date().timeIntervalSince(timestamp)
             if age > cacheExpirationSeconds { return }
         }
+
+        guard let data = SecureCache.load(forKey: cacheKey) else { return }
 
         do {
             let decoder = JSONDecoder()
             decoder.dateDecodingStrategy = .iso8601
             visits = try decoder.decode([Visit].self, from: data)
         } catch {
-            UserDefaults.standard.removeObject(forKey: cacheKey)
+            SecureCache.delete(forKey: cacheKey)
             UserDefaults.standard.removeObject(forKey: cacheTimestampKey)
         }
     }
@@ -97,12 +98,12 @@ class VisitsViewModel {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
         guard let data = try? encoder.encode(visits) else { return }
-        UserDefaults.standard.set(data, forKey: cacheKey)
+        SecureCache.save(data: data, forKey: cacheKey)
         UserDefaults.standard.set(Date(), forKey: cacheTimestampKey)
     }
 
     func clearCache() {
-        UserDefaults.standard.removeObject(forKey: cacheKey)
+        SecureCache.delete(forKey: cacheKey)
         UserDefaults.standard.removeObject(forKey: cacheTimestampKey)
         visits = []
     }

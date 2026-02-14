@@ -62,11 +62,10 @@ class AuthService {
     private let keychainAccount = "sessionToken"
 
     private init() {
-        #if DEBUG
-        self.baseURL = URL(string: "https://www.trackmyrvu.com")!
-        #else
-        self.baseURL = URL(string: "https://www.trackmyrvu.com")!
-        #endif
+        guard let url = URL(string: "https://www.trackmyrvu.com") else {
+            fatalError("Invalid base URL configuration")
+        }
+        self.baseURL = url
     }
 
     // MARK: - Sign In with Google
@@ -181,19 +180,26 @@ class AuthService {
     // MARK: - Token Management (Keychain)
 
     private func saveTokenToKeychain(_ token: String) throws {
-        let data = token.data(using: .utf8)!
+        guard let data = token.data(using: .utf8) else {
+            throw AuthError.keychainError
+        }
 
-        let query: [String: Any] = [
+        // Delete old token first
+        let deleteQuery: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccount as String: keychainAccount
+        ]
+        SecItemDelete(deleteQuery as CFDictionary)
+
+        // Add new token with secure accessibility
+        let addQuery: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrAccount as String: keychainAccount,
-            kSecValueData as String: data
+            kSecValueData as String: data,
+            kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
         ]
 
-        // Delete old token
-        SecItemDelete(query as CFDictionary)
-
-        // Add new token
-        let status = SecItemAdd(query as CFDictionary, nil)
+        let status = SecItemAdd(addQuery as CFDictionary, nil)
         guard status == errSecSuccess else {
             throw AuthError.keychainError
         }

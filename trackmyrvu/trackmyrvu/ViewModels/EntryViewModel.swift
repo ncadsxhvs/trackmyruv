@@ -102,9 +102,24 @@ class EntryViewModel {
         errorMessage = nil
 
         do {
-            // Validate
+            // Validate procedures
             if !isNoShow && procedures.isEmpty {
                 errorMessage = "Please add at least one procedure or mark as no-show"
+                isSubmitting = false
+                return false
+            }
+
+            // Validate date range
+            let calendar = Calendar.current
+            let tomorrow = calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: Date())) ?? Date()
+            let pastLimit = calendar.date(byAdding: .year, value: -10, to: Date()) ?? Date()
+            if date >= tomorrow {
+                errorMessage = "Visit date cannot be in the future"
+                isSubmitting = false
+                return false
+            }
+            if date < pastLimit {
+                errorMessage = "Visit date is too far in the past"
                 isSubmitting = false
                 return false
             }

@@ -31,11 +31,14 @@ struct FavoritesView: View {
                     favoritesList
             }
         }
-        .task(id: hasLoaded) {
-            guard !hasLoaded else { return }
-            await cacheService.loadCodes()
-            await viewModel.loadFavorites()
-            hasLoaded = true
+        .onAppear {
+            if !hasLoaded {
+                Task {
+                    await cacheService.loadCodes()
+                    await viewModel.loadFavorites()
+                    hasLoaded = true
+                }
+            }
         }
     }
 
@@ -193,10 +196,7 @@ struct FavoriteRow: View {
 #Preview("With Favorites") {
     NavigationStack {
         VStack {
-            FavoritesView { code in
-                print("Selected: \(code.hcpcs)")
-            }
-
+            FavoritesView { _ in }
             Spacer()
         }
     }
@@ -205,10 +205,7 @@ struct FavoriteRow: View {
 #Preview("Empty State") {
     NavigationStack {
         VStack {
-            FavoritesView { code in
-                print("Selected: \(code.hcpcs)")
-            }
-
+            FavoritesView { _ in }
             Spacer()
         }
     }

@@ -222,7 +222,5 @@ struct RVUCodeRow: View {
 }
 
 #Preview {
-    RVUSearchView { hcpcs, description, statusCode, workRVU in
-        print("Selected: \(hcpcs) - \(description)")
-    }
+    RVUSearchView { _, _, _, _ in }
 }
