@@ -64,8 +64,6 @@ struct Favorite: Codable, Identifiable, Equatable {
         self.sortOrder = try container.decode(Int.self, forKey: .sortOrder)
         self.createdAt = try container.decodeIfPresent(Date.self, forKey: .createdAt)
         self.groupId = try container.decodeIfPresent(Int.self, forKey: .groupId)
-
-        print("✅ [Favorite] Decoded: \(hcpcs) (id: \(id), userId: \(userId))")
     }
 
     func encode(to encoder: Encoder) throws {
@@ -101,39 +99,4 @@ struct ReorderFavoritesRequest: Codable {
     }
 }
 
-// MARK: - Decoding Helpers
-
-private extension KeyedDecodingContainer {
-    func decodeStringOrInt(forKey key: Key) throws -> String {
-        // Debug: Check what type we're dealing with
-        print("🔍 [Decode] Trying to decode key: \(key.stringValue)")
-
-        // Try String first (most common case)
-        do {
-            let stringValue = try decode(String.self, forKey: key)
-            print("✅ [Decode] Successfully decoded '\(key.stringValue)' as String: \(stringValue)")
-            return stringValue
-        } catch {
-            print("⚠️ [Decode] Failed to decode '\(key.stringValue)' as String: \(error)")
-        }
-
-        // Try Int
-        do {
-            let intValue = try decode(Int.self, forKey: key)
-            print("✅ [Decode] Successfully decoded '\(key.stringValue)' as Int: \(intValue)")
-            return String(intValue)
-        } catch {
-            print("⚠️ [Decode] Failed to decode '\(key.stringValue)' as Int: \(error)")
-        }
-
-        // If both failed, throw descriptive error
-        throw DecodingError.typeMismatch(
-            String.self,
-            DecodingError.Context(
-                codingPath: codingPath + [key],
-                debugDescription: "Expected String or Int for key '\(key.stringValue)', but could not decode as either type"
-            )
-        )
-    }
-}
 

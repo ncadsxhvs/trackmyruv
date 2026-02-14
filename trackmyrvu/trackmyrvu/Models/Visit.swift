@@ -129,7 +129,7 @@ struct VisitProcedure: Codable, Identifiable, Equatable {
 
 // MARK: - Decoding helpers
 
-private extension KeyedDecodingContainer {
+extension KeyedDecodingContainer {
     func decodeStringOrInt(forKey key: Key) throws -> String {
         if let stringValue = try? decode(String.self, forKey: key) {
             return stringValue

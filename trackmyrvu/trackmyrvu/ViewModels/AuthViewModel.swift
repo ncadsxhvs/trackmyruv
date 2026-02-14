@@ -78,11 +78,11 @@ class AuthViewModel {
 
     /// Clear all cached data (visits, favorites, etc.)
     private func clearAllCaches() {
-        // Clear visits cache
-        UserDefaults.standard.removeObject(forKey: "cached_visits")
-        UserDefaults.standard.removeObject(forKey: "cached_visits_timestamp")
+        // Clear all Keychain-stored caches (visits, favorites)
+        SecureCache.deleteAll()
 
-        // Clear any other caches here in the future
-        print("🗑️ [Auth] Cleared all cached data on sign out")
+        // Clear non-sensitive metadata from UserDefaults
+        UserDefaults.standard.removeObject(forKey: "cached_visits_timestamp")
+        UserDefaults.standard.removeObject(forKey: "cached_favorites_version")
     }
 }

@@ -73,57 +73,39 @@ class VisitsViewModel {
         }
     }
 
-    // MARK: - Cache Management
+    // MARK: - Secure Cache Management (Keychain)
 
     private func loadFromCache() {
-        guard let data = UserDefaults.standard.data(forKey: cacheKey) else {
-            print("📦 [Cache] No cached visits found")
-            return
-        }
-
-        // Check if cache is expired
+        // Check timestamp first (stored in UserDefaults since it's not sensitive)
         if let timestamp = UserDefaults.standard.object(forKey: cacheTimestampKey) as? Date {
             let age = Date().timeIntervalSince(timestamp)
-            if age > cacheExpirationSeconds {
-                print("📦 [Cache] Cache expired (age: \(Int(age))s)")
-                return
-            }
-            print("📦 [Cache] Cache age: \(Int(age))s (valid)")
+            if age > cacheExpirationSeconds { return }
         }
+
+        guard let data = SecureCache.load(forKey: cacheKey) else { return }
 
         do {
             let decoder = JSONDecoder()
             decoder.dateDecodingStrategy = .iso8601
-            let cachedVisits = try decoder.decode([Visit].self, from: data)
-            visits = cachedVisits
-            print("📦 [Cache] Loaded \(cachedVisits.count) visits from cache")
+            visits = try decoder.decode([Visit].self, from: data)
         } catch {
-            print("📦 [Cache] Failed to decode cached visits: \(error)")
-            // Clear corrupted cache
-            UserDefaults.standard.removeObject(forKey: cacheKey)
+            SecureCache.delete(forKey: cacheKey)
             UserDefaults.standard.removeObject(forKey: cacheTimestampKey)
         }
     }
 
     private func saveToCache(_ visits: [Visit]) {
-        do {
-            let encoder = JSONEncoder()
-            encoder.dateEncodingStrategy = .iso8601
-            let data = try encoder.encode(visits)
-            UserDefaults.standard.set(data, forKey: cacheKey)
-            UserDefaults.standard.set(Date(), forKey: cacheTimestampKey)
-            print("📦 [Cache] Saved \(visits.count) visits to cache")
-        } catch {
-            print("📦 [Cache] Failed to save visits to cache: \(error)")
-        }
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        guard let data = try? encoder.encode(visits) else { return }
+        SecureCache.save(data: data, forKey: cacheKey)
+        UserDefaults.standard.set(Date(), forKey: cacheTimestampKey)
     }
 
-    /// Clear cached visits (useful for sign out)
     func clearCache() {
-        UserDefaults.standard.removeObject(forKey: cacheKey)
+        SecureCache.delete(forKey: cacheKey)
         UserDefaults.standard.removeObject(forKey: cacheTimestampKey)
         visits = []
-        print("📦 [Cache] Cleared all cached visits")
     }
 }
 

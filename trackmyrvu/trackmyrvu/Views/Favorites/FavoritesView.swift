@@ -28,16 +28,17 @@ struct FavoritesView: View {
             } else if viewModel.favorites.isEmpty {
                 emptyState
             } else {
-                let _ = print("📋 [FavoritesView] Displaying \(viewModel.favorites.count) favorites")
-                favoritesList
+                    favoritesList
             }
         }
-        .task(id: hasLoaded) {
-            guard !hasLoaded else { return }
-            print("🔄 [FavoritesView] Starting initial load...")
-            await cacheService.loadCodes()
-            await viewModel.loadFavorites()
-            hasLoaded = true
+        .onAppear {
+            if !hasLoaded {
+                Task {
+                    await cacheService.loadCodes()
+                    await viewModel.loadFavorites()
+                    hasLoaded = true
+                }
+            }
         }
     }
 
@@ -128,13 +129,7 @@ struct FavoritesView: View {
 
     /// Look up full HCPCS code details from cache
     private func lookupCode(hcpcs: String) -> RVUCode? {
-        let result = cacheService.codes.first(where: { $0.hcpcs == hcpcs })
-        if result == nil {
-            print("⚠️ [FavoritesView] HCPCS '\(hcpcs)' not found in cache (cache has \(cacheService.codes.count) codes, isLoaded: \(cacheService.isLoaded))")
-        } else {
-            print("✅ [FavoritesView] Found HCPCS '\(hcpcs)': \(result!.description)")
-        }
-        return result
+        cacheService.codes.first(where: { $0.hcpcs == hcpcs })
     }
 }
 
@@ -201,10 +196,7 @@ struct FavoriteRow: View {
 #Preview("With Favorites") {
     NavigationStack {
         VStack {
-            FavoritesView { code in
-                print("Selected: \(code.hcpcs)")
-            }
-
+            FavoritesView { _ in }
             Spacer()
         }
     }
@@ -213,10 +205,7 @@ struct FavoriteRow: View {
 #Preview("Empty State") {
     NavigationStack {
         VStack {
-            FavoritesView { code in
-                print("Selected: \(code.hcpcs)")
-            }
-
+            FavoritesView { _ in }
             Spacer()
         }
     }
