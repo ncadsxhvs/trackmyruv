@@ -52,6 +52,7 @@ actor APIService {
         do {
             return try Self.decoder.decode([Visit].self, from: data)
         } catch {
+            logDecodingError(error, data: data, label: "fetchVisits")
             throw APIError.decoding(error)
         }
     }
@@ -86,6 +87,7 @@ actor APIService {
         do {
             return try Self.decoder.decode(Visit.self, from: data)
         } catch {
+            logDecodingError(error, data: data, label: "createVisit")
             throw APIError.decoding(error)
         }
     }
@@ -120,6 +122,7 @@ actor APIService {
         do {
             return try Self.decoder.decode(Visit.self, from: data)
         } catch {
+            logDecodingError(error, data: data, label: "updateVisit")
             throw APIError.decoding(error)
         }
     }
@@ -172,6 +175,7 @@ actor APIService {
         do {
             return try Self.decoder.decode([Favorite].self, from: data)
         } catch {
+            logDecodingError(error, data: data, label: "fetchFavorites")
             throw APIError.decoding(error)
         }
     }
@@ -204,6 +208,7 @@ actor APIService {
         do {
             return try Self.decoder.decode(Favorite.self, from: data)
         } catch {
+            logDecodingError(error, data: data, label: "createFavorite")
             throw APIError.decoding(error)
         }
     }
@@ -319,6 +324,15 @@ actor APIService {
 
         return decoder
     }()
+
+    /// Log raw JSON response for debugging decode failures
+    private func logDecodingError(_ error: Error, data: Data, label: String) {
+        #if DEBUG
+        let rawJSON = String(data: data, encoding: .utf8) ?? "<non-UTF8 data>"
+        print("[\(label)] Decode error: \(error)")
+        print("[\(label)] Raw JSON (first 500 chars): \(String(rawJSON.prefix(500)))")
+        #endif
+    }
 
     private func decodeAPIErrorMessage(from data: Data) -> String? {
         guard let object = try? JSONSerialization.jsonObject(with: data, options: []),

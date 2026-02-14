@@ -92,7 +92,7 @@ struct VisitProcedure: Codable, Identifiable, Equatable {
         case hcpcs
         case description
         case statusCode
-        case workRVU
+        case workRVU = "workRvu"
         case quantity
     }
 
@@ -122,7 +122,8 @@ struct VisitProcedure: Codable, Identifiable, Equatable {
         self.hcpcs = try container.decode(String.self, forKey: .hcpcs)
         self.description = try container.decodeIfPresent(String.self, forKey: .description) ?? ""
         self.statusCode = try container.decodeIfPresent(String.self, forKey: .statusCode) ?? ""
-        self.workRVU = try container.decodeIfPresent(Double.self, forKey: .workRVU) ?? 0
+        // work_rvu: Postgres DECIMAL returns as String, also handle Double
+        self.workRVU = try container.decodeDoubleOrString(forKey: .workRVU) ?? 0
         self.quantity = try container.decodeIfPresent(Int.self, forKey: .quantity) ?? 1
     }
 }
@@ -130,6 +131,7 @@ struct VisitProcedure: Codable, Identifiable, Equatable {
 // MARK: - Decoding helpers
 
 extension KeyedDecodingContainer {
+    /// Decode a value that may be String or Int from the backend (e.g. SERIAL id fields)
     func decodeStringOrInt(forKey key: Key) throws -> String {
         if let stringValue = try? decode(String.self, forKey: key) {
             return stringValue
@@ -144,6 +146,19 @@ extension KeyedDecodingContainer {
             in: self,
             debugDescription: "Expected String or Int for key \(key.stringValue)"
         )
+    }
+
+    /// Decode a value that may be Double or String (Postgres DECIMAL returns as String)
+    func decodeDoubleOrString(forKey key: Key) throws -> Double? {
+        if let doubleValue = try? decode(Double.self, forKey: key) {
+            return doubleValue
+        }
+
+        if let stringValue = try? decode(String.self, forKey: key) {
+            return Double(stringValue)
+        }
+
+        return nil
     }
 }
 
