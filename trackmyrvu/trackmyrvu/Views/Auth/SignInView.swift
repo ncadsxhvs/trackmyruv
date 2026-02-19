@@ -6,9 +6,10 @@
 //
 
 import SwiftUI
+import AuthenticationServices
 import GoogleSignInSwift
 
-/// Google Sign-In authentication screen
+/// Authentication screen with Apple and Google Sign-In
 struct SignInView: View {
     @Bindable var authViewModel: AuthViewModel
 
@@ -42,8 +43,17 @@ struct SignInView: View {
 
                 Spacer()
 
-                // Google Sign-In button
+                // Sign-in buttons
                 VStack(spacing: 16) {
+                    SignInWithAppleButton(.signIn) { request in
+                        request.requestedScopes = [.email, .fullName]
+                    } onCompletion: { result in
+                        authViewModel.handleAppleSignIn(result: result)
+                    }
+                    .signInWithAppleButtonStyle(.black)
+                    .frame(height: 50)
+                    .padding(.horizontal, 40)
+
                     GoogleSignInButton(action: {
                         Task {
                             await authViewModel.signIn()
