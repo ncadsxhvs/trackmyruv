@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import AuthenticationServices
 import SwiftUI
 
 /// Observable view model for authentication state
@@ -31,11 +32,8 @@ class AuthViewModel {
     func checkAuthStatus() {
         Task {
             do {
-                // Try to restore session token from keychain
                 if let token = try await authService.restorePreviousSignIn() {
                     sessionToken = token
-                    // Token exists, create placeholder user
-                    // Real user data will be fetched from API
                     currentUser = User(id: "", email: "", name: nil, image: nil)
                 } else {
                     currentUser = nil
@@ -66,23 +64,54 @@ class AuthViewModel {
         isLoading = false
     }
 
+    /// Handle Apple Sign-In completion from SignInWithAppleButton
+    func handleAppleSignIn(result: Result<ASAuthorization, Error>) {
+        isLoading = true
+        errorMessage = nil
+
+        Task {
+            do {
+                let (user, token) = try await authService.handleAppleSignIn(result: result)
+                currentUser = user
+                sessionToken = token
+            } catch let error as AuthError where error == .appleSignInCancelled {
+                // User cancelled — don't show error
+            } catch {
+                errorMessage = error.localizedDescription
+                currentUser = nil
+                sessionToken = nil
+            }
+
+            isLoading = false
+        }
+    }
+
     /// Sign out and clear all cached data
     func signOut() {
         authService.signOut()
         currentUser = nil
         sessionToken = nil
-
-        // Clear all UserDefaults cache
         clearAllCaches()
     }
 
     /// Clear all cached data (visits, favorites, etc.)
     private func clearAllCaches() {
-        // Clear all Keychain-stored caches (visits, favorites)
         SecureCache.deleteAll()
-
-        // Clear non-sensitive metadata from UserDefaults
         UserDefaults.standard.removeObject(forKey: "cached_visits_timestamp")
         UserDefaults.standard.removeObject(forKey: "cached_favorites_version")
+    }
+}
+
+extension AuthError: Equatable {
+    static func == (lhs: AuthError, rhs: AuthError) -> Bool {
+        switch (lhs, rhs) {
+        case (.appleSignInCancelled, .appleSignInCancelled): return true
+        case (.noRootViewController, .noRootViewController): return true
+        case (.noUser, .noUser): return true
+        case (.noIDToken, .noIDToken): return true
+        case (.invalidResponse, .invalidResponse): return true
+        case (.keychainError, .keychainError): return true
+        default: return false
+        }
     }
 }
