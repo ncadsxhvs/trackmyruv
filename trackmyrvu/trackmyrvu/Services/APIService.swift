@@ -256,6 +256,27 @@ actor APIService {
         }
     }
 
+    // MARK: - Account
+
+    func deleteAccount() async throws {
+        let url = baseURL.appending(path: "user")
+
+        let request = try await makeAuthenticatedRequest(url: url, method: "DELETE")
+        let (_, response) = try await session.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw APIError.invalidResponse
+        }
+
+        if httpResponse.statusCode == 401 {
+            throw APIError.tokenExpired
+        }
+
+        guard (200..<300).contains(httpResponse.statusCode) else {
+            throw APIError.server(status: httpResponse.statusCode, message: nil)
+        }
+    }
+
     // MARK: - Authenticated Requests
 
     private func makeAuthenticatedRequest(
