@@ -86,6 +86,21 @@ class AuthViewModel {
         }
     }
 
+    /// Delete account permanently
+    func deleteAccount() async {
+        isLoading = true
+        errorMessage = nil
+
+        do {
+            try await APIService.shared.deleteAccount()
+            signOut()
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+
+        isLoading = false
+    }
+
     /// Sign out and clear all cached data
     func signOut() {
         authService.signOut()

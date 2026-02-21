@@ -12,6 +12,7 @@ struct HomeView: View {
     @Bindable var authViewModel: AuthViewModel
     @State private var visitsViewModel = VisitsViewModel()
     @State private var showSignOutConfirmation = false
+    @State private var showDeleteAccountConfirmation = false
     @State private var navigationPath = NavigationPath()
     @State private var showNewVisit = false
 
@@ -43,16 +44,28 @@ struct HomeView: View {
                 }
             }
             .confirmationDialog(
-                "Sign Out",
+                "Account",
                 isPresented: $showSignOutConfirmation,
                 titleVisibility: .visible
             ) {
                 Button("Sign Out", role: .destructive) {
                     authViewModel.signOut()
                 }
+                Button("Delete Account", role: .destructive) {
+                    showDeleteAccountConfirmation = true
+                }
+                Button("Cancel", role: .cancel) {}
+            }
+            .alert(
+                "Delete Account",
+                isPresented: $showDeleteAccountConfirmation
+            ) {
+                Button("Delete", role: .destructive) {
+                    Task { await authViewModel.deleteAccount() }
+                }
                 Button("Cancel", role: .cancel) {}
             } message: {
-                Text("Are you sure you want to sign out?")
+                Text("This will permanently delete your account and all your data. This action cannot be undone.")
             }
             .navigationDestination(for: String.self) { destination in
                 switch destination {
